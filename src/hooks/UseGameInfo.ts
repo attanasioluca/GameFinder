@@ -1,34 +1,60 @@
-import { useState, useEffect } from 'react';
-import axios from 'axios';
-import { Game } from './useGames';
+import { useEffect, useState } from "react";
+import apiClient from "../services/api-client";
+import { AxiosRequestConfig, CanceledError } from "axios";
+import { Game } from "./useGames";
+import { Platform } from "./usePlatforms";
+import useData from "./useData";
 
-
-interface UseGamesResult {
-  data: Game | null;
-  isLoading: boolean;
-  error: string | null;
+interface FetchResponse<T> {
+    id: string;
+    name: string;
+    description: string;
+    background_image: string;
+    parent_platforms: { platform : Platform }[]
+    metacritic: number;
+    rating_top: number;
 }
 
-const useGameInfo = (id: string): UseGamesResult => {
-  const [data, setData] = useState<Game>({} as Game);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
+const useGameInfo = <T>(id: string, requestConfig?: AxiosRequestConfig, deps?:any[]) => {
 
-  useEffect(() => {
-    const fetchGames = async () => {
-      setIsLoading(true);
+    const [error, setError] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
+    const [data, setData] = useState<Game>({id: '',
+    name: '',
+    description: '',
+    background_image: '',
+    parent_platforms: [],
+    metacritic: 0,
+    rating_top: 0
+    });
 
-      try {
-        const response =  await axios.get<Game>(`http://localhost:3000/games/${id}`);
-        console.log(response);
-        setData(response.data);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    fetchGames();
-  }, []);
-  return { data, isLoading, error };
-};
+    useEffect(() => {
+        const controller = new AbortController();
+        setIsLoading(true);
+        apiClient
+            .get<FetchResponse<T>>(`/games/${id}`, { signal: controller.signal, ...requestConfig })
+            .then(res => {
+                const transformedData: Game = {
+                    id: res.data.id,
+                    name: res.data.name,
+                    description: res.data.description,
+                    background_image: res.data.background_image,
+                    parent_platforms: res.data.parent_platforms,
+                    metacritic: res.data.metacritic,
+                    rating_top: res.data.rating_top
+                }
+                setData(transformedData);
+                setIsLoading(false);
+            })
+            .catch(err => {
+                if(err instanceof CanceledError) return;
+                setError(err.message)
+                setIsLoading(false);
+            });
+        return () => controller.abort();
+    }, deps ? [...deps] : []);
+    return { data, error, isLoading };
+}
+
 
 export default useGameInfo;

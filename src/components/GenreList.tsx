@@ -6,8 +6,8 @@ import {
     List,
     ListItem,
 } from "@chakra-ui/react";
-import useGenres from "../hooks/useGenres";
-import { Genre } from "../hooks/useGenres";
+import useGenres from "../oldhooks/useGenres";
+import { Genre } from "../oldhooks/useGenres";
 import getCroppedImageUrl from "../services/image-url";
 
 interface Props {

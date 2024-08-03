@@ -1,21 +1,23 @@
-import { Game } from "../hooks/useGames";
-import { Box, HStack, Heading, Image, Text, VStack } from "@chakra-ui/react";
+import { Game } from "../oldhooks/useGames";
+import { Box, Button, HStack, Heading, Image, Text, VStack } from "@chakra-ui/react";
 import PlatformIconList from "./PlatformIconList";
 import CriticScore from "./CriticScore";
 import Emoji from "./Emoji";
 import NavBar from "./NavBar";
 import getCroppedImageUrl from "../services/image-url";
+import { useState } from "react";
 
 interface Props {
+    onRating : () => void;
     game: Game;
 }
 
-const GamePageCard = ({ game }: Props) => {
+const GamePageCard = ({ onRating, game }: Props) => {
     console.log(game);
-
+    const [inLibraryStatus, setInLibraryStatus] = useState(false);
     return (
         <div>
-            <NavBar onSearch={() => {}} showSearch={false} onPress={()=>{}} />
+            <NavBar onSearch={() => {}} showSearch={true} onPress={()=>{}} />
             <VStack>
                 <HStack>
                     <Image
@@ -27,13 +29,15 @@ const GamePageCard = ({ game }: Props) => {
                     />
                     <VStack align="start">
                         <Heading>{game.name}</Heading>
-                        <HStack w="full" gap={7}>
-                            <Box marginTop="1">
-                                <CriticScore
-                                    rating={parseInt(game.metacritic)}
-                                />
+                        <HStack w="full" gap={3}>
+                            <Box>
+                                <CriticScore size={1} rating={parseInt(game.metacritic)}/>
                             </Box>
-                            <Emoji rating={parseInt(game.rating_top)} />
+                            <Button onClick={()=> {setInLibraryStatus(!inLibraryStatus)}}>{inLibraryStatus?"V":"+"}</Button>
+                            <Button onClick={onRating}>RATE</Button>
+                            <Box marginBottom={1}>
+                                <Emoji rating={parseInt(game.rating_top)} />
+                            </Box>
                         </HStack>
                         <PlatformIconList
                             platforms={game.parent_platforms.map(
