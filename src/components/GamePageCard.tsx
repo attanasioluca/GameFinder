@@ -1,23 +1,39 @@
 import { Game } from "../oldhooks/useGames";
-import { Box, Button, HStack, Heading, Image, Text, VStack } from "@chakra-ui/react";
+import {
+    Box,
+    Button,
+    ButtonGroup,
+    HStack,
+    Heading,
+    Icon,
+    IconButton,
+    Image,
+    Text,
+    VStack,
+} from "@chakra-ui/react";
 import PlatformIconList from "./PlatformIconList";
-import CriticScore from "./CriticScore";
 import Emoji from "./Emoji";
 import NavBar from "./NavBar";
 import getCroppedImageUrl from "../services/image-url";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { AddIcon, CheckIcon } from "@chakra-ui/icons";
+import Score from "./Score";
 
 interface Props {
-    onRating : () => void;
+    onRating: () => void;
     game: Game;
 }
 
 const GamePageCard = ({ onRating, game }: Props) => {
-    console.log(game);
-    const [inLibraryStatus, setInLibraryStatus] = useState(false);
+    const [inLibraryStatus, setInLibraryStatus] = useState<Boolean>(false);
+
+    useEffect(() => {
+        // Add - Remove the game from the database every time the user changes this property
+    }, [inLibraryStatus]);
+
     return (
         <div>
-            <NavBar onSearch={() => {}} showSearch={true} onPress={()=>{}} />
+            <NavBar onSearch={() => {}} showSearch={true} onPress={() => {}} />
             <VStack>
                 <HStack>
                     <Image
@@ -30,14 +46,48 @@ const GamePageCard = ({ onRating, game }: Props) => {
                     <VStack align="start">
                         <Heading>{game.name}</Heading>
                         <HStack w="full" gap={3}>
-                            <Box>
-                                <CriticScore size={1} rating={parseInt(game.metacritic)}/>
-                            </Box>
-                            <Button onClick={()=> {setInLibraryStatus(!inLibraryStatus)}}>{inLibraryStatus?"V":"+"}</Button>
+                            <ButtonGroup
+                                backgroundColor={
+                                    inLibraryStatus
+                                        ? "rgba(54,68,59)"
+                                        : "rgba(37,37,37)"
+                                }
+                                isAttached
+                                variant="outline"
+                            >
+                                <Button>
+                                    {inLibraryStatus
+                                        ? "In Library"
+                                        : "Add to Library"}
+                                </Button>
+                                <IconButton
+                                    onClick={() => {
+                                        setInLibraryStatus(!inLibraryStatus);
+                                    }}
+                                    aria-label="Add to Library"
+                                    icon={
+                                        inLibraryStatus ? (
+                                            <CheckIcon />
+                                        ) : (
+                                            <AddIcon />
+                                        )
+                                    }
+                                />
+                            </ButtonGroup>
+
                             <Button onClick={onRating}>RATE</Button>
-                            <Box marginBottom={1}>
-                                <Emoji rating={parseInt(game.rating_top)} />
-                            </Box>
+                            <HStack>
+                                <Score
+                                    type={0}
+                                    size={1}
+                                    rating={parseInt(game.metacritic)}
+                                />
+                                <Score
+                                    type={1}
+                                    size={1}
+                                    rating={parseInt(game.rating_top)}
+                                />
+                            </HStack>
                         </HStack>
                         <PlatformIconList
                             platforms={game.parent_platforms.map(
