@@ -3,6 +3,7 @@ import logo from "../assets/logo.webp";
 import ColorModeSwitch from "./ColorModeSwitch";
 import SearchInput from "./SearchInput";
 import { Link } from "react-router-dom";
+import accountlogo from "../assets/accountlogo.webp";
 
 interface Props {
     onSearch: (searchText: string) => void;
@@ -19,6 +20,9 @@ const NavBar = ({ onSearch, onPress, showSearch}: Props) => {
             {showSearch && <SearchInput onSearch={onSearch} />}
             {!showSearch && <Spacer/>}
             <ColorModeSwitch />
+            <Link to={`/account`}>
+                <Image src={accountlogo} boxSize="50px"/>
+            </Link>
         </HStack>
     );
 };
