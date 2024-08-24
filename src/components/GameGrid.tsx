@@ -11,7 +11,8 @@ interface Props {
 }
 
 const GameGrid = ({ gameQuery, onChange}: Props) => {
-    const { data, error, isLoading } = useGames(gameQuery);
+    const {getGames} = useGames();
+    const { data, error, isLoading } = getGames(gameQuery);
     const skeletons = [1, 2, 3, 4, 5, 6];
     if (error) return <Text>{error}</Text>
     if(data != null){

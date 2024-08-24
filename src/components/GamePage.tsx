@@ -1,6 +1,6 @@
 import { useParams } from "react-router-dom";
 import GamePageCard from "./GamePageCard";
-import useDataById from "../oldhooks/UseGameInfo";
+import useGameInfo from "../oldhooks/UseGameInfo";
 import { useState } from "react";
 import RatingScreen from "./RatingScreen";
 import { Box, Portal } from "@chakra-ui/react";
@@ -10,7 +10,8 @@ const GamePage = () => {
     const [isRating, setIsRating] = useState(false);
 
     if (gameId !== undefined) {
-        const { data, error, isLoading } = useDataById(gameId);
+        const {getGameInfo} = useGameInfo();
+        const { data, error, isLoading } = getGameInfo(gameId);
         if (isLoading) return <p>Loading...</p>;
         else if (error) return <p>Error: {error}</p>;
         if (data) {

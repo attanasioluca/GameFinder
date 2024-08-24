@@ -17,26 +17,28 @@ interface Res {
   error: string | null;
 }
 
-const useUserInfo = (id: string): Res => {
-  const [data, setData] = useState<User>({} as User);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    const fetchUsers = async () => {
-      setIsLoading(true);
-
-      try {
-        const response =  await axios.get<User>(`http://localhost:3000/users/${id}`);
-        console.log(response);
-        setData(response.data);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    fetchUsers();
-  }, []);
-  return { data, isLoading, error };
+const useUserInfo = () => {
+    const getUserInfo = (id: string): Res => {
+        const [data, setData] = useState<User>({} as User);
+        const [isLoading, setIsLoading] = useState<boolean>(true);
+        const [error, setError] = useState<string | null>(null);
+        useEffect(() => {
+            const fetchUsers = async () => {
+              setIsLoading(true);
+              try {
+                const response = await axios.get<User>(`http://localhost:3000/users/${id}`);
+                setData(response.data);
+              } catch (error) {
+                setError("failed to fetch user data");
+              } finally {
+                setIsLoading(false);
+              }
+            };
+            fetchUsers();
+          }, []);
+          return { data, isLoading, error };
+        };
+  return {getUserInfo};
 };
 
 export default useUserInfo;

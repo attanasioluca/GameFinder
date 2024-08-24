@@ -9,26 +9,28 @@ interface UseGamesResult {
   error: string | null;
 }
 
-const useGameInfo = (id: string): UseGamesResult => {
-  const [data, setData] = useState<Game>({} as Game);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
+const useGameInfo = () => {
 
-  useEffect(() => {
-    const fetchGames = async () => {
-      setIsLoading(true);
+    const getGameInfo = (id: string): UseGamesResult => {
+        const [data, setData] = useState<Game>({} as Game);
+        const [isLoading, setIsLoading] = useState<boolean>(true);
+        const [error, setError] = useState<string | null>(null);
 
-      try {
-        const response =  await axios.get<Game>(`http://localhost:3000/games/${id}`);
-        console.log(response);
-        setData(response.data);
-      } finally {
-        setIsLoading(false);
-      }
+        useEffect(() => {
+            const fetchGames = async () => {
+            setIsLoading(true);
+            try {
+                const response =  await axios.get<Game>(`http://localhost:3000/games/${id}`);
+                setData(response.data);
+            } finally {
+                setIsLoading(false);
+            }
+            };
+            fetchGames();
+        }, []);
+        return { data, isLoading, error };
     };
-    fetchGames();
-  }, []);
-  return { data, isLoading, error };
-};
+    return { getGameInfo };
+}
 
 export default useGameInfo;
