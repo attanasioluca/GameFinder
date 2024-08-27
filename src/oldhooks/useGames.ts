@@ -15,7 +15,7 @@ export interface Game {
     added: string
 }
 
-interface UseGamesResult {
+export interface UseGamesResult {
   data: Game[] | null;
   isLoading: boolean;
   error: string | null;
