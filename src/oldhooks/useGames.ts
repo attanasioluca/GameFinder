@@ -13,7 +13,16 @@ export interface Game {
     rating_top: string;
     released: string,
     added: string
+    reviews: Review[]
 }
+
+export interface Review {
+    author: string, // Reference to the user who posted the review (ID)
+    authorName: string,
+    gameId: string, // Reference to the game being reviewed
+    comment: string, // The comment text
+    rating: number, // The rating value
+    }
 
 export interface UseGamesResult {
   data: Game[] | null;

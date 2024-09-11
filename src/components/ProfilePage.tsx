@@ -1,11 +1,18 @@
-import useUserInfo, { User } from "../hooks/useUserInfo";
+import useUserInfo from "../hooks/useUserInfo";
 import LoginPage from "./LoginPage";
-import { Flex, Heading, Spacer, Text, VStack } from "@chakra-ui/react";
-import GameCard from "./GameCard";
-import FriendCard from "./FriendCard";
+import {
+    Flex,
+    Grid,
+    GridItem,
+    Heading,
+    Spacer,
+    Text,
+    VStack,
+} from "@chakra-ui/react";
 import useGamesById from "../oldhooks/useGamesById";
-import GameCardContainer from "./GameCardContainer";
-import GameCardSkeleton from "./GameCardSkeleton";
+import ProfileGameList from "./ProfileGameList";
+import FriendsList from "./FriendsList";
+import NavBar from "./NavBar";
 
 interface Props {
     userId: string | null;
@@ -16,78 +23,77 @@ const ProfilePage = ({ userId }: Props) => {
     const { getUserInfo } = useUserInfo();
     const { getGamesById } = useGamesById();
     const { data, error, isLoading } = getUserInfo(userId);
+
     if (data) {
-        const {
-            data: gamesData,
-            isLoading: gamesLoading
-        } = getGamesById(data.games);
-        const {
-            data: wishlistData,
-            isLoading: wishlistLoading
-        } = getGamesById(data.wishlist);
+        const { data: gamesData, isLoading: gamesLoading } = getGamesById(
+            data.games
+        );
+        const { data: wishlistData, isLoading: wishlistLoading } = getGamesById(
+            data.wishlist
+        );
         if (error) return <Text>Error loading profile</Text>;
         if (isLoading) return <Text>Loading profile...</Text>;
         return (
-            <VStack backgroundColor="yellow">
-                <Heading>{"Welcome back, " + data.username}</Heading>
-                <Flex w="100%" backgroundColor={"green"}>
-                    <Spacer />
-                    <Flex direction="column" backgroundColor={"red"} w="20%">
-                        <Heading>Friends</Heading>
-                        <Flex
-                            backgroundColor="gray"
-                            borderColor="gray"
-                            padding="5px"
-                            borderRadius="3px"
-                            direction="column"
-                        >
-                            {data.friends.map((friend) => (
-                                <FriendCard friend={friend} />
-                            ))}
+            <Grid
+                templateAreas={{
+                    base: `"nav" "main"`,
+                }}
+                templateColumns={{
+                    base: "1fr",
+                }}
+            >
+                <GridItem area="nav">
+                    <NavBar
+                        showSearch={false}
+                        onSearch={(searchText) => {}}
+                        onPress={() => {}}
+                    />
+                </GridItem>
+                <GridItem area="main">
+                    <VStack>
+                        <Heading margin={"20px 0px 25px 0px"}>
+                            {"Welcome back, " + data.username}
+                        </Heading>
+                        <Flex w="100%" alignItems="flex-start" maxW = "1900">
+                            <Spacer />
+                            <FriendsList data={data.friends} />
+                            <Spacer />
+                            <VStack
+                                w="30%"
+                                borderColor={"gray.650"}
+                                border="2px"
+                                borderRadius={"40px"}
+                            >
+                                <Heading padding={"40px 0px 35px 0px"}>
+                                    Games
+                                </Heading>
+                                <ProfileGameList
+                                    gameIds={data.games}
+                                    games={gamesData}
+                                    isLoading={gamesLoading}
+                                />
+                            </VStack>
+                            <Spacer />
+                            <VStack
+                                w="30%"
+                                borderColor={"gray.650"}
+                                border="2px"
+                                borderRadius={"35px"}
+                            >
+                                <Heading padding={"40px 0px 35px 0px"}>
+                                    Wishlist
+                                </Heading>
+                                <ProfileGameList
+                                    gameIds={data.wishlist}
+                                    games={wishlistData}
+                                    isLoading={wishlistLoading}
+                                />
+                            </VStack>
+                            <Spacer />
                         </Flex>
-                    </Flex>
-                    <Spacer />
-                    <VStack w="35%" backgroundColor={"blue"}>
-                        <Heading>Games</Heading>
-                        <VStack>
-                            {gamesLoading &&
-                                data.games.map((skeleton) => (
-                                    <GameCardContainer
-                                        key={skeleton.toString()}
-                                    >
-                                        <GameCardSkeleton key={skeleton} />
-                                    </GameCardContainer>
-                                ))}
-                            {gamesData?.map((game) => (
-                                <GameCardContainer 
-                                        key={game.id}>
-                                    <GameCard game={game} />
-                                </GameCardContainer>
-                            ))}
-                        </VStack>
                     </VStack>
-                    <Spacer />
-                    <VStack w="35%">
-                        <Heading>Wishlist</Heading>
-                        <VStack>
-                            {wishlistLoading &&
-                                data.wishlist.map((skeleton) => (
-                                    <GameCardContainer
-                                        key={skeleton.toString()}
-                                    >
-                                        <GameCardSkeleton key={skeleton} />
-                                    </GameCardContainer>
-                                ))}
-                            {wishlistData?.map((game) => (
-                                <GameCardContainer key={game.id}>
-                                    <GameCard game={game} />
-                                </GameCardContainer>
-                            ))}
-                        </VStack>
-                    </VStack>
-                    <Spacer />
-                </Flex>
-            </VStack>
+                </GridItem>
+            </Grid>
         );
     }
 };

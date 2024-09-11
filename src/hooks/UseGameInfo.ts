@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import apiClient from "../services/api-client";
 import { AxiosRequestConfig, CanceledError } from "axios";
-import { Game } from "./useGames";
+import { Game, Review } from "./useGames";
 import { Platform } from "./usePlatforms";
 import useData from "./useData";
 
@@ -13,19 +13,22 @@ interface FetchResponse<T> {
     parent_platforms: { platform : Platform }[]
     metacritic: number;
     rating_top: number;
+    reviews: Review[]
 }
 
 const useGameInfo = <T>(id: string, requestConfig?: AxiosRequestConfig, deps?:any[]) => {
 
     const [error, setError] = useState('');
     const [isLoading, setIsLoading] = useState(false);
-    const [data, setData] = useState<Game>({id: '',
-    name: '',
-    description: '',
-    background_image: '',
-    parent_platforms: [],
-    metacritic: 0,
-    rating_top: 0
+    const [data, setData] = useState<Game>({
+        id: '',
+        name: '',
+        description: '',
+        background_image: '',
+        parent_platforms: [],
+        metacritic: 0,
+        rating_top: 0,
+        reviews: []
     });
 
     useEffect(() => {
@@ -41,7 +44,8 @@ const useGameInfo = <T>(id: string, requestConfig?: AxiosRequestConfig, deps?:an
                     background_image: res.data.background_image,
                     parent_platforms: res.data.parent_platforms,
                     metacritic: res.data.metacritic,
-                    rating_top: res.data.rating_top
+                    rating_top: res.data.rating_top,
+                    reviews: res.data.reviews
                 }
                 setData(transformedData);
                 setIsLoading(false);

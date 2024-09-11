@@ -12,7 +12,7 @@ const GameCard = ({ game }: Props) => {
     if (!game) return null;
     else {
         return (
-            <Link to={`games/${game.id}`}>
+            <Link to={`/games/${game.id}`}>
                 <Card>
                     <Image src={getCroppedImageUrl(game.background_image)}/>
                     <CardBody>
@@ -34,7 +34,6 @@ const GameCard = ({ game }: Props) => {
                         
                         </HStack>
                         <Heading fontSize="2xl">{game.name}</Heading>
-                        
                     </CardBody>
                 </Card>
             </Link>

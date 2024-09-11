@@ -1,23 +1,54 @@
-import React from 'react'
-import useUserInfo, { User } from '../hooks/useUserInfo'
-import { Box, Flex, HStack, IconButton, Spacer } from '@chakra-ui/react'
-import { SmallCloseIcon } from '@chakra-ui/icons'
+import useUserInfo from "../hooks/useUserInfo";
+import { HStack, Text, IconButton, Spacer } from "@chakra-ui/react";
+import { DeleteIcon } from "@chakra-ui/icons";
+import usePost from "../hooks/usePost";
+import { USERID } from "../data/USER_DATA";
 interface Props {
-    friend: string
+    friend: string;
 }
 
 const FriendCard = ({ friend }: Props) => {
-    const {getUserInfo} = useUserInfo();
-    const {data, error, isLoading } = getUserInfo(friend);
-    if(data){
+    const { getUserInfo } = useUserInfo();
+    const { data, error, isLoading } = getUserInfo(friend);
+    const {
+        data: postData,
+        error: postError,
+        loading,
+        post,
+    } = usePost("http://localhost:3000/changeFriendStatus");
+
+    const handleFriendRemoval = async () => {
+        if (data?.id) {
+            try {
+                await post({ userId: USERID, friendId: data.id, add: false });
+                console.log("Friend removed successfully");
+            } catch (err) {
+                console.error("Error removing friend", err);
+            }
+        }
+    };
+
+    if (data) {
         return (
-            <Flex margin="5px">
-                {data?.username} 
-                <Spacer/>
-                <IconButton icon={<SmallCloseIcon/>} backgroundColor="red" aria-label="RemoveFriendButton"/>
-            </Flex>
-        )
+            <HStack
+                alignContent={"bottom"}
+                justifyItems="end"
+                margin={"0px 0px 15px 0px"}
+                padding={"10px"}
+                borderRadius={"14px"}
+                borderWidth={"2px"}
+            >
+                <Text fontSize={"20px"}>{data?.username} </Text>
+                <Spacer />
+                <IconButton
+                    onClick={handleFriendRemoval}
+                    icon={<DeleteIcon />}
+                    backgroundColor="red"
+                    aria-label="RemoveFriendButton"
+                />
+            </HStack>
+        );
     }
-}
+};
 
 export default FriendCard;

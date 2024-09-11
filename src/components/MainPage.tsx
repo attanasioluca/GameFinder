@@ -42,7 +42,6 @@ const MainPage = () => {
         >
             <GridItem area="nav">
                 <NavBar
-                    showSearch={true}
                     onSearch={(searchText) =>
                         setGameQuery({
                             ...gameQuery,
@@ -50,6 +49,7 @@ const MainPage = () => {
                             pageNumber: 1,
                         })
                     }
+                    showSearch={true}
                     onPress={() => setGameQuery(initialQuery)}
                 />
             </GridItem>

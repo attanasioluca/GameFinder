@@ -1,8 +1,9 @@
-import { Game } from "../oldhooks/useGames";
+import { Game, Review } from "../oldhooks/useGames";
 import {
     Box,
     Button,
     ButtonGroup,
+    Divider,
     HStack,
     Heading,
     Icon,
@@ -10,14 +11,20 @@ import {
     Image,
     Text,
     VStack,
+    Spinner,
 } from "@chakra-ui/react";
 import PlatformIconList from "./PlatformIconList";
-import Emoji from "./Emoji";
 import NavBar from "./NavBar";
 import getCroppedImageUrl from "../services/image-url";
 import { useEffect, useState } from "react";
-import { AddIcon, CheckIcon } from "@chakra-ui/icons";
+import { AddIcon, CheckIcon, StarIcon } from "@chakra-ui/icons";
 import Score from "./Score";
+import CommentBox from "./CommentBox";
+import usePost from "../hooks/usePost";
+import useGameStatus from "../hooks/useGameStatus";
+import { USERID, USERROLE } from "../data/USER_DATA";
+import DOMPurify from "dompurify";
+import { FaHeart } from "react-icons/fa";
 
 interface Props {
     onRating: () => void;
@@ -25,17 +32,125 @@ interface Props {
 }
 
 const GamePageCard = ({ onRating, game }: Props) => {
-    const [inLibraryStatus, setInLibraryStatus] = useState<Boolean>(false);
+    // Fetch status and post data
+    const { loading, error, post: postStatus } = usePost(
+        "http://localhost:3000/changeGameStatus"
+    );
 
+    const { error: deleteReviewError, post: postDeleteReview } = usePost(
+        "http://localhost:3000/deleteReview"
+    );
+
+    const {
+        data: statusData,
+        error: statusError,
+        isLoading: statusLoading,
+    } = useGameStatus(USERID, game.id);
+
+    // States for inLibrary and inWishlist
+    const [inLibraryStatus, setInLibraryStatus] = useState<boolean>(false);
+    const [inWishlistStatus, setInWishlistStatus] = useState<boolean>(false);
+
+    // Update state when statusData is available
     useEffect(() => {
-        // Add - Remove the game from the database every time the user changes this property
-    }, [inLibraryStatus]);
+        if (statusData) {
+            setInLibraryStatus(statusData.inCollection);
+            setInWishlistStatus(statusData.inWishlist);
+        }
+    }, [statusData]);
+
+    // Handle adding game to the library or wishlist
+    const handleGameAdd = async (type: number, add: boolean) => {
+        if (game.id) {
+            try {
+                await postStatus({ userId: USERID, gameId: game.id, type, add });
+                console.log("Game added successfully");
+            } catch (err) {
+                console.error("Error adding game", err);
+            }
+        }
+    };
+
+    const handleReviewToggle = (review: Review) => {
+        handleReviewDeletion(review);
+    }
+
+    const handleReviewDeletion = async (review: Review) => {
+        if(review){
+            try{
+                await postDeleteReview({ 
+                    author: review.author, 
+                    authorName: review.authorName,
+                    gameId: review.gameId, 
+                    comment: review.comment, 
+                    rating: review.rating,
+                });
+                console.log("Review deleted successfully");
+            } catch (err) {
+                console.error("Error deleting review", err);
+            }
+        }
+    }
+
+    const handleWishlistToggle = () => {
+        if (inWishlistStatus) {
+            // Remove game from wishlist
+            handleGameAdd(2, false);
+        } else {
+            // Add game to wishlist
+            if (inLibraryStatus) {
+                handleGameAdd(1, false);
+                setInLibraryStatus(false);
+            }
+            handleGameAdd(2, true);
+        }
+        setInWishlistStatus(!inWishlistStatus);
+    };
+
+    const handleLibraryToggle = () => {
+        if (inLibraryStatus) {
+            // Remove game from wishlist
+            handleGameAdd(1, false);
+        } else {
+            // Add game to wishlist
+            if (inWishlistStatus) {
+                handleGameAdd(2, false);
+                setInWishlistStatus(false);
+            }
+            handleGameAdd(1, true);
+        }
+        setInLibraryStatus(!inLibraryStatus);
+    };
+
+    // Error or loading UI
+    if (statusError) {
+        return <Text>Error loading game status</Text>;
+    }
+
+    if(deleteReviewError) {
+        return <Text>Error deleting review</Text>;
+    }
+
+    if (error) {
+        return <Text>Error adding game to the library</Text>;
+    }
+
+    if (statusLoading || loading) {
+        return <Spinner />;
+    }
 
     return (
         <div>
-            <NavBar onSearch={() => {}} showSearch={true} onPress={() => {}} />
+            <NavBar onSearch={() => {}} showSearch={false} onPress={() => {}} />
             <VStack>
-                <HStack>
+                <HStack
+                    borderColor={"gray.650"}
+                    border="2px"
+                    w={"1200px"}
+                    padding={"40px 80px 40px 40px"}
+                    borderRadius={"34px"}
+                    marginTop={" 20px"}
+                >
                     <Image
                         src={getCroppedImageUrl(game.background_image)}
                         maxHeight={500}
@@ -44,13 +159,13 @@ const GamePageCard = ({ onRating, game }: Props) => {
                         margin={5}
                     />
                     <VStack align="start">
-                        <Heading>{game.name}</Heading>
+                        <Heading marginBottom={"12px"}>{game.name}</Heading>
                         <HStack w="full" gap={3}>
                             <ButtonGroup
                                 backgroundColor={
                                     inLibraryStatus
-                                        ? "rgba(54,68,59)"
-                                        : "rgba(37,37,37)"
+                                        ? "rgba(108, 136, 118, 0.6)"
+                                        : ""
                                 }
                                 isAttached
                                 variant="outline"
@@ -61,9 +176,7 @@ const GamePageCard = ({ onRating, game }: Props) => {
                                         : "Add to Library"}
                                 </Button>
                                 <IconButton
-                                    onClick={() => {
-                                        setInLibraryStatus(!inLibraryStatus);
-                                    }}
+                                    onClick={handleLibraryToggle}
                                     aria-label="Add to Library"
                                     icon={
                                         inLibraryStatus ? (
@@ -74,8 +187,28 @@ const GamePageCard = ({ onRating, game }: Props) => {
                                     }
                                 />
                             </ButtonGroup>
-
-                            <Button onClick={onRating}>RATE</Button>
+                            <IconButton
+                                backgroundColor={
+                                    inWishlistStatus
+                                        ? "rgba(255,215,0, 0.3)" // Gold color for wishlist
+                                        : ""
+                                }
+                                onClick={handleWishlistToggle}
+                                aria-label="Add to Wishlist"
+                                variant="outline"
+                                icon={
+                                    inWishlistStatus ? (
+                                        <CheckIcon />
+                                    ) : (
+                                        <Icon as={FaHeart} />
+                                    )
+                                }
+                            />
+                            {(USERROLE === "admin" || USERROLE === "premium") &&
+                            <Button variant="outline" onClick={onRating}>
+                                RATE
+                            </Button>
+                            }   
                             <HStack>
                                 <Score
                                     type={0}
@@ -89,20 +222,54 @@ const GamePageCard = ({ onRating, game }: Props) => {
                                 />
                             </HStack>
                         </HStack>
-                        <PlatformIconList
-                            platforms={game.parent_platforms.map(
-                                (platform) => platform
-                            )}
-                        />
+                        <Box marginLeft={"4px"}>
+                            <PlatformIconList
+                                platforms={game.parent_platforms.map(
+                                    (platform) => platform
+                                )}
+                            />
+                        </Box>
                     </VStack>
                 </HStack>
 
-                <Box w={1200} borderRadius={5}>
+                <VStack
+                    borderColor={"gray.650"}
+                    w={"1200px"}
+                    border="2px"
+                    padding={"40px 80px 40px 40px"}
+                    borderRadius={"34px"}
+                    marginTop={" 20px"}
+                    alignItems={"trailing"}
+                >
+                    <Heading margin={"20px 0px 0px 32px"}> Description</Heading>
                     <Text
-                        dangerouslySetInnerHTML={{ __html: game.description }}
-                        p={8}
+                        dangerouslySetInnerHTML={{
+                            __html: DOMPurify.sanitize(game.description),
+                        }}
+                        margin={"0px 32px 20px 32px"}
                     />
-                </Box>
+                </VStack>
+
+                <VStack
+                    borderColor={"gray.650"}
+                    w={"1200px"}
+                    border="2px"
+                    padding={"40px 80px 40px 40px"}
+                    borderRadius={"34px"}
+                    marginTop={" 20px"}
+                    alignItems={"trailing"}
+                >
+                    <Heading margin={"20px 0px 0px 32px"}>Reviews</Heading>
+                    {game.reviews && game.reviews.length > 0 ? (
+                        game.reviews.map((review) => (
+                            <CommentBox key={review.author} review={review} onDelete={() =>{handleReviewToggle(review)}} />
+                        ))
+                    ) : (
+                        <Text margin={"0px 20px 20px 32px"}>
+                            No reviews yet. 
+                        </Text>
+                    )}
+                </VStack>
             </VStack>
         </div>
     );
