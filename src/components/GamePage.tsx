@@ -5,8 +5,7 @@ import { useState } from "react";
 import RatingScreen from "./RatingScreen";
 import { Box, Portal } from "@chakra-ui/react";
 import usePost from "../hooks/usePost";
-import { USERID } from "../data/USER_DATA";
-import useUserInfo from "../hooks/useUserInfo";
+import useUserTokenInfo from "../hooks/useUserTokenInfo";
 
 const GamePage = () => {
     const { gameId } = useParams();
@@ -15,14 +14,16 @@ const GamePage = () => {
         error: commentError,
         post: postComment
     } = usePost("http://localhost:3000/addReview");
-    const { getUserInfo } = useUserInfo();
-    const { data: userData, error: userInfoError } = getUserInfo(USERID);
+    const { getUserTokenInfo } = useUserTokenInfo();
+    const token = localStorage.getItem("token");
+    console.log(token);
+    const { data: userData, error: userInfoError } = getUserTokenInfo(token? token: "");
     
     const handleSubmitRating = async (rating: number, comment: string) => {
         if (gameId && userData) {
             try {
                 await postComment({
-                    author: USERID,
+                    author: userData.id,
                     authorName: userData.username,
                     gameId: gameId,
                     comment: comment,

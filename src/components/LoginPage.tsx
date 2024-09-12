@@ -17,6 +17,8 @@ import {
 } from "@chakra-ui/react";
 import { FaUserAlt, FaLock } from "react-icons/fa";
 import usePost from "../hooks/usePost";
+import MainPage from "./MainPage";
+import { useNavigate } from "react-router-dom";
 
 const CFaUserAlt = chakra(FaUserAlt);
 const CFaLock = chakra(FaLock);
@@ -29,11 +31,16 @@ interface FormData {
 
 const App = () => {
     const [showPassword, setShowPassword] = useState(false);
-    const [formData, setFormData] = useState<FormData>({ email: '', password: '' });
+    const [formData, setFormData] = useState<FormData>({ email: '', password: ''});
     const handleShowClick = () => setShowPassword(!showPassword);
-    const { data: loginData, error: commentError, post: postLogin } = usePost(
+    const navigate = useNavigate();
+    const { data: loginData, error: loginError, post: postLogin } = usePost(
         "http://localhost:3000/login"
     );
+
+    if(loginError){
+        console.log(loginError);
+    }
 
     const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
@@ -43,21 +50,22 @@ const App = () => {
         }));
       };
 
-    const handleSubmit = async () => {
+      const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
         try {
             await postLogin({
                 email: formData.email,
                 password: formData.password,
             });
-            console.log("Logged in successfully");
-            console.log(loginData);
             
         } catch (err) {
             console.error("Error logging in", err);
         }
-    };
-    
-    
+    };    
+    if(loginData){
+        localStorage.setItem('token', loginData as string);
+            navigate("/");
+    }
 
     return (
         <Flex
@@ -77,7 +85,7 @@ const App = () => {
                 <Avatar bg="purple.500" />
                 <Heading color="purple.500">Welcome</Heading>
                 <Box minW={{ base: "90%", md: "468px" }}>
-                    <form onSubmit={() =>{handleSubmit}}>
+                    <form onSubmit={handleSubmit}>
                         <Stack
                             spacing={4}
                             p="1rem"
@@ -128,17 +136,14 @@ const App = () => {
                                         </Button>
                                     </InputRightElement>
                                 </InputGroup>
-                                <FormHelperText textAlign="right">
-                                    <Link>forgot password?</Link>
-                                </FormHelperText>
                             </FormControl>
+
                             <Button
                                 borderRadius={0}
                                 type="submit"
                                 variant="solid"
                                 backgroundColor="purple.500"
                                 width="full"
-                                onClick={handleSubmit}
                             >
                                 Login
                             </Button>

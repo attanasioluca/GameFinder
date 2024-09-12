@@ -1,16 +1,16 @@
 import React from 'react'
 import { Review } from '../oldhooks/useGames';
 import { Box, Text, Button, Flex, Spacer, useColorModeValue } from '@chakra-ui/react';
-import { USERROLE } from '../data/USER_DATA';
 
 
 interface Props{
     review: Review;
+    userRole: string | undefined;
     onDelete: () => void;
 }
 
 // CommentBox component
-const CommentBox = ({ review, onDelete }: Props) => {
+const CommentBox = ({ review, onDelete, userRole }: Props) => {
   const { author, authorName, gameId, comment, rating } = review;
 
   // Handle delete button click
@@ -35,7 +35,7 @@ const CommentBox = ({ review, onDelete }: Props) => {
       <Flex align="center">
         <Text fontSize="lg" fontWeight="bold">{authorName} says:</Text>
         <Spacer />
-        {USERROLE === 'admin' && (
+        {userRole === 'admin' && (
           <Button colorScheme="red" size="sm" onClick={handleDelete}>
             Delete
           </Button>

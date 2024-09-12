@@ -1,32 +1,23 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-
-export interface User {
-    id: string;
-    username: string;
-    member_since: Date;
-    user_type: string;
-    friends: string[];
-    wishlist: string[]; // UserIDs
-    games: string[]; // UserIDs
-}
+import { User } from './useUserInfo';
 
 interface Res {
-  data: User | null;
+  data: User[] | null;
   isLoading: boolean;
   error: string | null;
 }
 
-const useUserInfo = () => {
-    const getUserInfo = (id: string): Res => {
-        const [data, setData] = useState<User>({} as User);
+const useAllUsers = () => {
+    const getAllUsers = (id: string | undefined): Res => {
+        const [data, setData] = useState<User[]>([])
         const [isLoading, setIsLoading] = useState<boolean>(true);
         const [error, setError] = useState<string | null>(null);
         useEffect(() => {
             const fetchUsers = async () => {
               setIsLoading(true);
               try {
-                const response = await axios.get<User>(`http://localhost:3000/userById/${id}`);
+                const response = await axios.get<User[]>(`http://localhost:3000/allUsers/${id}`);
                 setData(response.data);
               } catch (error) {
                 setError("failed to fetch user data");
@@ -38,7 +29,7 @@ const useUserInfo = () => {
           }, []);
           return { data, isLoading, error };
         };
-  return { getUserInfo };
+  return { getAllUsers };
 };
 
-export default useUserInfo;
+export default useAllUsers;

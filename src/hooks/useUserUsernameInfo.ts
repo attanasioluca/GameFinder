@@ -17,8 +17,8 @@ interface Res {
   error: string | null;
 }
 
-const useUserInfo = () => {
-    const getUserInfo = (id: string): Res => {
+const useUserUsernameInfo = () => {
+    const getUserUsernameInfo = (Username: string): Res => {
         const [data, setData] = useState<User>({} as User);
         const [isLoading, setIsLoading] = useState<boolean>(true);
         const [error, setError] = useState<string | null>(null);
@@ -26,8 +26,9 @@ const useUserInfo = () => {
             const fetchUsers = async () => {
               setIsLoading(true);
               try {
-                const response = await axios.get<User>(`http://localhost:3000/userById/${id}`);
-                setData(response.data);
+                const response =  await axios.get<User>(`http://localhost:3000/userByUsername/${Username}`);
+            setData(response.data);
+
               } catch (error) {
                 setError("failed to fetch user data");
               } finally {
@@ -38,7 +39,6 @@ const useUserInfo = () => {
           }, []);
           return { data, isLoading, error };
         };
-  return { getUserInfo };
+  return { getUserUsernameInfo } ;
 };
-
-export default useUserInfo;
+export default useUserUsernameInfo;

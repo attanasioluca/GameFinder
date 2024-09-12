@@ -12,7 +12,7 @@ export interface UseGameStatusResult {
   error: string | null;
 }
 
-const useGameStatus = (userId: string, gameId: string): UseGameStatusResult => {
+const useGameStatus = (userId: string | undefined, gameId: string | undefined): UseGameStatusResult => {
     const [data, setData] = useState<Status | null>(null);
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);

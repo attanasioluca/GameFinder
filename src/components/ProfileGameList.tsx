@@ -17,7 +17,7 @@ const ProfileGameList = ({isLoading, games, gameIds}: Props) => {
         {isLoading &&
             gameIds.map((skeleton) => (
                 <GameCardContainer
-                    key={skeleton.toString()}
+                    key={skeleton}
                 >
                     <GameCardSkeleton key={skeleton} />
                 </GameCardContainer>

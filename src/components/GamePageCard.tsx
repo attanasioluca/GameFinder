@@ -22,9 +22,9 @@ import Score from "./Score";
 import CommentBox from "./CommentBox";
 import usePost from "../hooks/usePost";
 import useGameStatus from "../hooks/useGameStatus";
-import { USERID, USERROLE } from "../data/USER_DATA";
 import DOMPurify from "dompurify";
 import { FaHeart } from "react-icons/fa";
+import useUserTokenInfo from "../hooks/useUserTokenInfo";
 
 interface Props {
     onRating: () => void;
@@ -33,10 +33,13 @@ interface Props {
 
 const GamePageCard = ({ onRating, game }: Props) => {
     // Fetch status and post data
+    const token = localStorage.getItem("token");
+    const { getUserTokenInfo } = useUserTokenInfo();
+    const { data: userData, error: userInfoError } = getUserTokenInfo(token? token : "");
+    
     const { loading, error, post: postStatus } = usePost(
         "http://localhost:3000/changeGameStatus"
     );
-
     const { error: deleteReviewError, post: postDeleteReview } = usePost(
         "http://localhost:3000/deleteReview"
     );
@@ -45,7 +48,7 @@ const GamePageCard = ({ onRating, game }: Props) => {
         data: statusData,
         error: statusError,
         isLoading: statusLoading,
-    } = useGameStatus(USERID, game.id);
+    } = useGameStatus(userData?.id, game.id);
 
     // States for inLibrary and inWishlist
     const [inLibraryStatus, setInLibraryStatus] = useState<boolean>(false);
@@ -63,7 +66,7 @@ const GamePageCard = ({ onRating, game }: Props) => {
     const handleGameAdd = async (type: number, add: boolean) => {
         if (game.id) {
             try {
-                await postStatus({ userId: USERID, gameId: game.id, type, add });
+                await postStatus({ userId: userData?.id, gameId: game.id, type, add });
                 console.log("Game added successfully");
             } catch (err) {
                 console.error("Error adding game", err);
@@ -204,7 +207,7 @@ const GamePageCard = ({ onRating, game }: Props) => {
                                     )
                                 }
                             />
-                            {(USERROLE === "admin" || USERROLE === "premium") &&
+                            {(userData?.user_type === "admin" || userData?.user_type === "premium") &&
                             <Button variant="outline" onClick={onRating}>
                                 RATE
                             </Button>
@@ -262,7 +265,7 @@ const GamePageCard = ({ onRating, game }: Props) => {
                     <Heading margin={"20px 0px 0px 32px"}>Reviews</Heading>
                     {game.reviews && game.reviews.length > 0 ? (
                         game.reviews.map((review) => (
-                            <CommentBox key={review.author} review={review} onDelete={() =>{handleReviewToggle(review)}} />
+                            <CommentBox userRole={userData?.user_type} key={review.author} review={review} onDelete={() =>{handleReviewToggle(review)}} />
                         ))
                     ) : (
                         <Text margin={"0px 20px 20px 32px"}>

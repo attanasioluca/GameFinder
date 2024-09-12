@@ -2,7 +2,8 @@ import useUserInfo from "../hooks/useUserInfo";
 import { HStack, Text, IconButton, Spacer } from "@chakra-ui/react";
 import { DeleteIcon } from "@chakra-ui/icons";
 import usePost from "../hooks/usePost";
-import { USERID } from "../data/USER_DATA";
+import useUserTokenInfo from "../hooks/useUserTokenInfo";
+
 interface Props {
     friend: string;
 }
@@ -16,11 +17,14 @@ const FriendCard = ({ friend }: Props) => {
         loading,
         post,
     } = usePost("http://localhost:3000/changeFriendStatus");
+    const token = localStorage.getItem("token");
+    const { getUserTokenInfo } = useUserTokenInfo();
+    const { data: userData, error: userInfoError } = getUserTokenInfo(token? token : "");
 
     const handleFriendRemoval = async () => {
         if (data?.id) {
             try {
-                await post({ userId: USERID, friendId: data.id, add: false });
+                await post({ userId: userData?.id, friendId: data.id, add: false });
                 console.log("Friend removed successfully");
             } catch (err) {
                 console.error("Error removing friend", err);

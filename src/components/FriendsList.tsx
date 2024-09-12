@@ -1,7 +1,6 @@
 import { Flex, Heading, Text } from '@chakra-ui/react'
 import React, { useEffect, useState } from 'react'
 import FriendCard from './FriendCard'
-import { User } from '../hooks/useUserInfo';
 
 interface Props {
     data: string[];
