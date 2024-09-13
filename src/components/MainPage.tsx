@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { Platform } from "../oldhooks/usePlatforms";
-import { Genre } from "../oldhooks/useGenres";
+import { Platform } from "../hooks/usePlatforms";
+import { Genre } from "../hooks/useGenres";
 import { Box, Flex, Grid, GridItem, Heading, Show } from "@chakra-ui/react";
 import NavBar from "./NavBar";
 import GenreList from "./GenreList";
@@ -23,10 +23,21 @@ export interface GameQuery {
 }
 
 const MainPage = () => {
-    const userToken = localStorage.getItem("token");
-    const navigate = useNavigate();
 
-    // Handle navigation to login page inside useEffect to avoid interfering with render flow
+    const navigate = useNavigate();
+    useEffect(() => {
+        const urlParams = new URLSearchParams(window.location.search);
+        const userToken = urlParams.get('token');
+
+        if (userToken) {
+        localStorage.setItem('token', userToken);
+        navigate('/', { replace: true });
+        }
+    }, [navigate]);
+
+
+    const userToken = localStorage.getItem("token");
+    
     useEffect(() => {
         if (!userToken) {
             navigate("/login");
@@ -44,7 +55,7 @@ const MainPage = () => {
     };
     const [gameQuery, setGameQuery] = useState<GameQuery>(initialQuery);
     const [resultLen, setResultLen] = useState(0);
-    const [showFriends, setShowFriends] = useState(false); // 0 = games, 1 = users
+    const [showFriends, setShowFriends] = useState(false);
 
     const { post: postFriend } = usePost(
         "http://localhost:3000/changeFriendStatus"

@@ -3,7 +3,7 @@ import { IconButton, HStack } from '@chakra-ui/react';
 import { StarIcon } from '@chakra-ui/icons';
 
 interface Props {
-    onRatingChange: (rating: number) => void; // Prop to pass the rating back
+    onRatingChange: (rating: number) => void; 
 }
 
 const StarRating = ({ onRatingChange }: Props) => {
@@ -11,7 +11,7 @@ const StarRating = ({ onRatingChange }: Props) => {
 
     const handleRating = (rate: number) => {
         setRating(rate);
-        onRatingChange(rate); // Pass the selected rating back to the parent
+        onRatingChange(rate); 
     };
 
     return (

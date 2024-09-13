@@ -1,18 +1,18 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Game } from './useGames';
+import { Game, Review } from './useGames';
 
 
-interface UseGamesResult {
-  data: Game | null;
+interface UseReviewsResult {
+  data: Review[] | null;
   isLoading: boolean;
   error: string | null;
 }
 
-const useGameInfo = () => {
+const useReviews = () => {
 
-    const getGameInfo = (id: string): UseGamesResult => {
-        const [data, setData] = useState<Game>({} as Game);
+    const getReviews = (id: string): UseReviewsResult => {
+        const [data, setData] = useState<Review[] | null>([]);
         const [isLoading, setIsLoading] = useState<boolean>(true);
         const [error, setError] = useState<string | null>(null);
 
@@ -20,9 +20,11 @@ const useGameInfo = () => {
             const fetchGames = async () => {
             setIsLoading(true);
             try {
-                const response =  await axios.get<Game>(`http://localhost:3000/games/${id}`);
+                const response =  await axios.get<Review[] | null>(`http://localhost:3000/reviews/${id}`);
                 setData(response.data);
-            } finally {
+            } catch{
+                throw new Error('Failed to fetch reviews');   
+            }finally {
                 setIsLoading(false);
             }
             };
@@ -30,7 +32,8 @@ const useGameInfo = () => {
         }, []);
         return { data, isLoading, error };
     };
-    return { getGameInfo };
+    return { getReviews };
 }
 
-export default useGameInfo;
+export default useReviews;
+

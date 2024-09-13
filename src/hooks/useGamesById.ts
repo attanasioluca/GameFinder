@@ -1,6 +1,12 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Game, UseGamesResult } from './useGames';
+import { Game } from './useGames';
+
+export interface UseGamesResult {
+    data: Game[] | null;
+    isLoading: boolean;
+    error: string | null;
+  }
 
 const useGamesById = () => {
     const getGamesById = (query: string[]| undefined): UseGamesResult => {

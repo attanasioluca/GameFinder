@@ -1,21 +1,6 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-
-export interface User {
-    id: string;
-    username: string;
-    member_since: Date;
-    user_type: string;
-    friends: string[];
-    wishlist: string[]; // UserIDs
-    games: string[]; // UserIDs
-}
-
-interface Res {
-  data: User | null;
-  isLoading: boolean;
-  error: string | null;
-}
+import { Res, User } from './useUserTokenInfo';
 
 const useUserUsernameInfo = () => {
     const getUserUsernameInfo = (Username: string): Res => {

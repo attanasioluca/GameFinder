@@ -6,8 +6,8 @@ import {
     List,
     ListItem,
 } from "@chakra-ui/react";
-import useGenres from "../oldhooks/useGenres";
-import { Genre } from "../oldhooks/useGenres";
+import useGenres from "../hooks/useGenres";
+import { Genre } from "../hooks/useGenres";
 import getCroppedImageUrl from "../services/image-url";
 
 interface Props {
@@ -16,8 +16,7 @@ interface Props {
 }
 
 const GenreList = ({ onClick, selectedGenre }: Props) => {
-    const {getGenres} = useGenres();
-    const { data, error } = getGenres();
+    const { data, error } = useGenres();
     if (error) return null;
     if(data){
         return (

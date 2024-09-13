@@ -17,7 +17,7 @@ const RatingScreen = ({ onSubmitRating, isRating, setIsRating }: Props) => {
     };
 
     const handleSubmit = () => {
-        if (rating > 0) { // Ensure a rating is selected
+        if (rating > 0) { 
             onSubmitRating(rating, comment);
         } else {
             console.error("Please select a rating");
@@ -47,7 +47,7 @@ const RatingScreen = ({ onSubmitRating, isRating, setIsRating }: Props) => {
                     value={comment}
                     onChange={(e) => setComment(e.target.value)}
                 />
-                <StarRating onRatingChange={handleRatingChange} /> {/* Pass rating handler */}
+                <StarRating onRatingChange={handleRatingChange} /> 
                 <HStack w={300} marginTop={50}>
                     <Button onClick={() => setIsRating(false)}>Cancel</Button>
                     <Spacer />

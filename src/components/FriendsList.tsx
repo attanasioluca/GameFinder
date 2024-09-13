@@ -10,7 +10,7 @@ const FriendsList = ({ data }: Props) => {
 
     const [friendList, setFriendList] = useState<string[]>([]);
     useEffect(()=>{
-        setFriendList(data) // Convert string ids to User objects for easier
+        setFriendList(data)
     }, [data])
     if(friendList.length === 0) 
         return (

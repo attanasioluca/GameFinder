@@ -1,4 +1,4 @@
-import { Game } from "../oldhooks/useGames";
+import { Game } from "../hooks/useGames";
 import { Card, CardBody, HStack, Heading, Image } from "@chakra-ui/react";
 import PlatformIconList from "./PlatformIconList";
 import getCroppedImageUrl from "../services/image-url";
@@ -23,11 +23,11 @@ const GameCard = ({ game }: Props) => {
                             <HStack>
                                 <Score
                                     size={0}
-                                    rating={parseInt(game.metacritic)}
+                                    rating={game.metacritic}
                                     type={0}
                                 />
                                 <Score
-                                rating={parseInt(game.rating_top)}
+                                rating={game.rating_top}
                                 size={0}
                                 type={1}/>
                             </HStack>

@@ -1,4 +1,4 @@
-import { Game, Review } from "../oldhooks/useGames";
+import { Game, Review } from "../hooks/useGames";
 import {
     Box,
     Button,
@@ -25,14 +25,14 @@ import useGameStatus from "../hooks/useGameStatus";
 import DOMPurify from "dompurify";
 import { FaHeart } from "react-icons/fa";
 import useUserTokenInfo from "../hooks/useUserTokenInfo";
+import useReviews from "../hooks/useReviews";
 
 interface Props {
     onRating: () => void;
     game: Game;
-}
+}//
 
 const GamePageCard = ({ onRating, game }: Props) => {
-    // Fetch status and post data
     const token = localStorage.getItem("token");
     const { getUserTokenInfo } = useUserTokenInfo();
     const { data: userData, error: userInfoError } = getUserTokenInfo(token? token : "");
@@ -43,6 +43,8 @@ const GamePageCard = ({ onRating, game }: Props) => {
     const { error: deleteReviewError, post: postDeleteReview } = usePost(
         "http://localhost:3000/deleteReview"
     );
+    const { getReviews } = useReviews();
+    const { data: reviewData, error: reviewError, isLoading: reviewLoading } = getReviews(game.id);
 
     const {
         data: statusData,
@@ -50,11 +52,9 @@ const GamePageCard = ({ onRating, game }: Props) => {
         isLoading: statusLoading,
     } = useGameStatus(userData?.id, game.id);
 
-    // States for inLibrary and inWishlist
     const [inLibraryStatus, setInLibraryStatus] = useState<boolean>(false);
     const [inWishlistStatus, setInWishlistStatus] = useState<boolean>(false);
 
-    // Update state when statusData is available
     useEffect(() => {
         if (statusData) {
             setInLibraryStatus(statusData.inCollection);
@@ -62,7 +62,6 @@ const GamePageCard = ({ onRating, game }: Props) => {
         }
     }, [statusData]);
 
-    // Handle adding game to the library or wishlist
     const handleGameAdd = async (type: number, add: boolean) => {
         if (game.id) {
             try {
@@ -83,10 +82,8 @@ const GamePageCard = ({ onRating, game }: Props) => {
             try{
                 await postDeleteReview({ 
                     author: review.author, 
-                    authorName: review.authorName,
                     gameId: review.gameId, 
-                    comment: review.comment, 
-                    rating: review.rating,
+            
                 });
                 console.log("Review deleted successfully");
             } catch (err) {
@@ -97,10 +94,8 @@ const GamePageCard = ({ onRating, game }: Props) => {
 
     const handleWishlistToggle = () => {
         if (inWishlistStatus) {
-            // Remove game from wishlist
             handleGameAdd(2, false);
         } else {
-            // Add game to wishlist
             if (inLibraryStatus) {
                 handleGameAdd(1, false);
                 setInLibraryStatus(false);
@@ -112,10 +107,8 @@ const GamePageCard = ({ onRating, game }: Props) => {
 
     const handleLibraryToggle = () => {
         if (inLibraryStatus) {
-            // Remove game from wishlist
             handleGameAdd(1, false);
         } else {
-            // Add game to wishlist
             if (inWishlistStatus) {
                 handleGameAdd(2, false);
                 setInWishlistStatus(false);
@@ -125,7 +118,6 @@ const GamePageCard = ({ onRating, game }: Props) => {
         setInLibraryStatus(!inLibraryStatus);
     };
 
-    // Error or loading UI
     if (statusError) {
         return <Text>Error loading game status</Text>;
     }
@@ -193,7 +185,7 @@ const GamePageCard = ({ onRating, game }: Props) => {
                             <IconButton
                                 backgroundColor={
                                     inWishlistStatus
-                                        ? "rgba(255,215,0, 0.3)" // Gold color for wishlist
+                                        ? "rgba(255,215,0, 0.3)" 
                                         : ""
                                 }
                                 onClick={handleWishlistToggle}
@@ -216,12 +208,12 @@ const GamePageCard = ({ onRating, game }: Props) => {
                                 <Score
                                     type={0}
                                     size={1}
-                                    rating={parseInt(game.metacritic)}
+                                    rating={game.metacritic}
                                 />
                                 <Score
                                     type={1}
                                     size={1}
-                                    rating={parseInt(game.rating_top)}
+                                    rating={game.rating_top}
                                 />
                             </HStack>
                         </HStack>
@@ -263,8 +255,8 @@ const GamePageCard = ({ onRating, game }: Props) => {
                     alignItems={"trailing"}
                 >
                     <Heading margin={"20px 0px 0px 32px"}>Reviews</Heading>
-                    {game.reviews && game.reviews.length > 0 ? (
-                        game.reviews.map((review) => (
+                    {reviewData && reviewData.length > 0 ? (
+                        reviewData.map((review) => (
                             <CommentBox userRole={userData?.user_type} key={review.author} review={review} onDelete={() =>{handleReviewToggle(review)}} />
                         ))
                     ) : (

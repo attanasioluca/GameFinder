@@ -28,7 +28,6 @@ const useGameInfo = <T>(id: string, requestConfig?: AxiosRequestConfig, deps?:an
         parent_platforms: [],
         metacritic: 0,
         rating_top: 0,
-        reviews: []
     });
 
     useEffect(() => {
@@ -45,7 +44,6 @@ const useGameInfo = <T>(id: string, requestConfig?: AxiosRequestConfig, deps?:an
                     parent_platforms: res.data.parent_platforms,
                     metacritic: res.data.metacritic,
                     rating_top: res.data.rating_top,
-                    reviews: res.data.reviews
                 }
                 setData(transformedData);
                 setIsLoading(false);

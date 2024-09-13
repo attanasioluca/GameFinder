@@ -1,6 +1,6 @@
 import { Box, VStack } from '@chakra-ui/react';
 import React from 'react'
-import { Game } from '../oldhooks/useGames';
+import { Game } from '../hooks/useGames';
 import GameCard from './GameCard';
 import GameCardContainer from './GameCardContainer';
 import GameCardSkeleton from './GameCardSkeleton';

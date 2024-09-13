@@ -7,8 +7,8 @@ export interface User {
     member_since: Date;
     user_type: string;
     friends: string[];
-    wishlist: string[]; // UserIDs
-    games: string[]; // UserIDs
+    wishlist: string[]; 
+    games: string[]; 
 }
 
 interface Res {

@@ -1,5 +1,5 @@
 import React from 'react'
-import { Review } from '../oldhooks/useGames';
+import { Review } from '../hooks/useGames';
 import { Box, Text, Button, Flex, Spacer, useColorModeValue } from '@chakra-ui/react';
 
 
@@ -9,18 +9,15 @@ interface Props{
     onDelete: () => void;
 }
 
-// CommentBox component
 const CommentBox = ({ review, onDelete, userRole }: Props) => {
   const { author, authorName, gameId, comment, rating } = review;
 
-  // Handle delete button click
   const handleDelete = () => {
     if (onDelete) {
       onDelete();
     }
   };
 
-  // Dynamic background color based on color mode (light/dark)
   const bg = useColorModeValue('gray.100', 'gray.700');
 
   return (

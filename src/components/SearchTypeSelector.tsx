@@ -1,7 +1,7 @@
 import { Box, ButtonGroup, HStack, Icon, IconButton } from "@chakra-ui/react";
 import React from "react";
-import { FaUser } from "react-icons/fa"; // User icon from Font Awesome
-import { GiGamepad } from "react-icons/gi"; // Gamepad icon from Game Icons
+import { FaUser } from "react-icons/fa"; 
+import { GiGamepad } from "react-icons/gi"; 
 
 interface Props {
     onChange: () => void;

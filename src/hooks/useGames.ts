@@ -3,11 +3,11 @@ import useData from "./useData";
 import { Platform } from "./usePlatforms";
 
 export interface Review {
-    author: string, // Reference to the user who posted the review (ID)
+    author: string, 
     authorName: string,
-    gameId: string, // Reference to the game being reviewed
-    comment: string, // The comment text
-    rating: number, // The rating value
+    gameId: string,
+    comment: string,
+    rating: number, 
     }
 
 export interface Game {
@@ -18,7 +18,6 @@ export interface Game {
     parent_platforms: { platform : Platform }[]
     metacritic: number;
     rating_top: number;
-    reviews: Review[]
 }
 
 const useGames = (gameQuery: GameQuery) => 

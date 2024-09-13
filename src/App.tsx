@@ -4,6 +4,7 @@ import MainPage from "./components/MainPage";
 import ProfilePage from "./components/ProfilePage";
 import LoginPage from "./components/LoginPage";
 import SignUpPage from "./components/SignUpPage";
+import GoogleLoginPage from "./components/GoogleLoginPage";
 
 function App() {
     let userToken = localStorage.getItem('token');
@@ -14,6 +15,7 @@ function App() {
         <Route path="/account" element={<ProfilePage/>} />
         <Route path="/signup" element={<SignUpPage />} />
         <Route path="/login" element={<LoginPage />} />
+        <Route path="/googleLogin" element={<GoogleLoginPage />} />
     </Routes>
     );
 }

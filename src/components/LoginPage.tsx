@@ -19,10 +19,10 @@ import { FaUserAlt, FaLock } from "react-icons/fa";
 import usePost from "../hooks/usePost";
 import MainPage from "./MainPage";
 import { useNavigate } from "react-router-dom";
+import useGoogleAuth from "../hooks/useGoogleAuth";
 
 const CFaUserAlt = chakra(FaUserAlt);
 const CFaLock = chakra(FaLock);
-
 
 interface FormData {
     email: string;
@@ -30,41 +30,50 @@ interface FormData {
 }
 
 const App = () => {
-    const [showPassword, setShowPassword] = useState(false);
-    const [formData, setFormData] = useState<FormData>({ email: '', password: ''});
-    const handleShowClick = () => setShowPassword(!showPassword);
     const navigate = useNavigate();
-    const { data: loginData, error: loginError, post: postLogin } = usePost(
-        "http://localhost:3000/login"
-    );
+    if(localStorage.getItem("token")) {
+        navigate("/");
+    }
+    const [showPassword, setShowPassword] = useState(false);
+    const [formData, setFormData] = useState<FormData>({
+        email: "",
+        password: "",
+    });
+    const handleShowClick = () => setShowPassword(!showPassword);
+    
+    const {
+        data: loginData,
+        error: loginError,
+        post: postLogin,
+    } = usePost("http://localhost:3000/login");
 
-    if(loginError){
+    if (loginError) {
         console.log(loginError);
     }
 
     const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
-        setFormData(prevState => ({
-          ...prevState,
-          [name]: value,
+        setFormData((prevState) => ({
+            ...prevState,
+            [name]: value,
         }));
-      };
+    };
 
-      const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         try {
             await postLogin({
                 email: formData.email,
                 password: formData.password,
             });
-            
         } catch (err) {
             console.error("Error logging in", err);
         }
-    };    
-    if(loginData){
-        localStorage.setItem('token', loginData as string);
-            navigate("/");
+    };
+
+    if (loginData) {
+        localStorage.setItem("token", loginData as string);
+        navigate("/");
     }
 
     return (
@@ -147,6 +156,11 @@ const App = () => {
                             >
                                 Login
                             </Button>
+                            <button>
+                                <a href="http://localhost:3000/auth/google">
+                                    entra con google
+                                </a>
+                            </button>
                         </Stack>
                     </form>
                 </Box>

@@ -1,6 +1,6 @@
 import { useParams } from "react-router-dom";
 import GamePageCard from "./GamePageCard";
-import useGameInfo from "../oldhooks/UseGameInfo";
+import useGameInfo from "../hooks/UseGameInfo";
 import { useState } from "react";
 import RatingScreen from "./RatingScreen";
 import { Box, Portal } from "@chakra-ui/react";
@@ -30,7 +30,7 @@ const GamePage = () => {
                     rating: rating,
                 });
                 console.log("Comment added successfully");
-                setIsRating(false); // Close the rating screen after submission
+                setIsRating(false); 
             } catch (err) {
                 console.error("Error adding comment", err);
             }
@@ -42,8 +42,7 @@ const GamePage = () => {
     };
 
     if (gameId !== undefined) {
-        const { getGameInfo } = useGameInfo();
-        const { data, error, isLoading } = getGameInfo(gameId);
+        const { data, error, isLoading } = useGameInfo(gameId);
         if (isLoading) return <p>Loading...</p>;
         if (error) return <p>Error: {error}</p>;
         if (data) {
@@ -55,7 +54,7 @@ const GamePage = () => {
                             <RatingScreen
                                 isRating={isRating}
                                 setIsRating={setIsRating}
-                                onSubmitRating={handleSubmitRating} // Pass the submit handler
+                                onSubmitRating={handleSubmitRating} 
                             />
                         </Portal>
                     )}

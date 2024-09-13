@@ -8,7 +8,6 @@ export type PostResponse<T> = {
   post: (body: any) => Promise<void>;
 };
 
-// Custom hook
 const usePost = <T,>(url: string): PostResponse<T> => {
   const [data, setData] = useState<T | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
