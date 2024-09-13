@@ -66,8 +66,6 @@ const App = () => {
 
       const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        console.log(formData);
-        
         try {
             await postSignup({
                 email: formData.email,

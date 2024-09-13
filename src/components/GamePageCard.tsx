@@ -144,7 +144,7 @@ const GamePageCard = ({ onRating, game }: Props) => {
 
     return (
         <div>
-            <NavBar onSearch={() => {}} showSearch={false} onPress={() => {}} />
+            <NavBar onToggle={() => { } } onSearch={() => { } } showSearch={false} onPress={() => { } } searchType={false} />
             <VStack>
                 <HStack
                     borderColor={"gray.650"}

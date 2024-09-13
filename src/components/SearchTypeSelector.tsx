@@ -8,7 +8,7 @@ interface Props {
     currentCheck: boolean; // 0 on games, 1 on users
 }
 
-const SearTypeSelector = ({ onChange, currentCheck }: Props) => {
+const SearchTypeSelector = ({ onChange, currentCheck }: Props) => {
     return (
         <HStack>
             <ButtonGroup isAttached>
@@ -29,4 +29,4 @@ const SearTypeSelector = ({ onChange, currentCheck }: Props) => {
     );
 };
 
-export default SearTypeSelector;
+export default SearchTypeSelector;
