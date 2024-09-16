@@ -35,7 +35,6 @@ const MainPage = () => {
         }
     }, [navigate]);
 
-
     const userToken = localStorage.getItem("token");
     
     useEffect(() => {

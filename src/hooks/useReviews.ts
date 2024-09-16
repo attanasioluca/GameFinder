@@ -22,7 +22,7 @@ const useReviews = () => {
             try {
                 const response =  await axios.get<Review[] | null>(`http://localhost:3000/reviews/${id}`);
                 setData(response.data);
-            } catch{
+            } catch {
                 throw new Error('Failed to fetch reviews');   
             }finally {
                 setIsLoading(false);

@@ -1,43 +1,64 @@
-import { useState, useEffect } from 'react';
-import axios from 'axios';
-import { Game } from './useGames';
+import { useEffect, useState } from "react";
+import apiClient from "../services/api-client";
+import { AxiosRequestConfig, CanceledError } from "axios";
+import { Game, Review } from "./useGames";
+import { Platform } from "./usePlatforms";
 
-export interface UseGamesResult {
-    data: Game[] | null;
-    isLoading: boolean;
-    error: string | null;
-  }
+interface FetchResponse<T> {
+    id: string;
+    name: string;
+    description: string;
+    background_image: string;
+    parent_platforms: { platform: Platform }[];
+    metacritic: number;
+    rating_top: number;
+    reviews: Review[];
+}
 
-const useGamesById = () => {
-    const getGamesById = (query: string[]| undefined): UseGamesResult => {
-        const [data, setData] = useState<Game[]>([]);
-        const [isLoading, setIsLoading] = useState<boolean>(true);
-        const [error, setError] = useState<string | null>(null);
-        useEffect(() => {
-            const fetchGames = async () => {
-            setIsLoading(true);
+const useGameInfo = (ids: string[], requestConfig?: AxiosRequestConfig, deps?: any[]) => {
+    const [error, setError] = useState<string>('');
+    const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [data, setData] = useState<Game[]>([]);
+
+    useEffect(() => {
+        const controller = new AbortController();
+        setIsLoading(true);
+
+        const fetchGames = async () => {
             try {
-                const params = {
-                    ids: query
-                };
-                const filteredParams = Object.fromEntries(
-                    Object.entries(params).filter(([_, v]) => v != null)
-                    );
-                const response =  await axios.get<Game[]>('http://localhost:3000/gamesById', {
-                params: filteredParams
-                });
-                setData(response.data);
-            }catch{
-                setError("Error fetching games")
+                // Create an array of promises for each game ID
+                const requests = ids.map(id => 
+                    apiClient.get<FetchResponse<any>>(`/games/${id}`, { signal: controller.signal, ...requestConfig })
+                );
+                
+                // Wait for all requests to complete
+                const responses = await Promise.all(requests);
+                
+                // Transform the responses into an array of Game objects
+                const transformedData: Game[] = responses.map(res => ({
+                    id: res.data.id,
+                    name: res.data.name,
+                    description: res.data.description,
+                    background_image: res.data.background_image,
+                    parent_platforms: res.data.parent_platforms,
+                    metacritic: res.data.metacritic,
+                    rating_top: res.data.rating_top,
+                }));
+
+                setData(transformedData);
+            } catch (err) {
+                if (err instanceof CanceledError) return;
             } finally {
                 setIsLoading(false);
             }
-            };
-            fetchGames();
-        }, []);
-    return { data, isLoading, error };
-    };
-    return { getGamesById };
+        };
+
+        fetchGames();
+
+        return () => controller.abort();
+    }, deps ? [...deps, ids] : [ids]);
+
+    return { data, error, isLoading };
 }
 
-export default useGamesById;
+export default useGameInfo;

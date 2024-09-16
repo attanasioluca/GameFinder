@@ -18,7 +18,7 @@ import useUserTokenInfo from "../hooks/useUserTokenInfo";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { Game } from "../hooks/useGames";
-//
+
 const ProfilePage = () => {
     const userToken = localStorage.getItem("token");
     const navigate = useNavigate();
@@ -28,40 +28,20 @@ const ProfilePage = () => {
         }
     }, [userToken, navigate]);
 
-    const { getGamesById } = useGamesById();
     const { getUserTokenInfo } = useUserTokenInfo();
-    const [gamesData, setGamesData] = useState<Game[]>([]);
-    const [wishlistData, setWishlistData] = useState<Game[]>([]);
-
     const { data, error, isLoading } = getUserTokenInfo(userToken);
+
     const {
         data: fetchedGames,
         isLoading: gamesLoading,
         error: gamesError,
-    } = getGamesById(
-        //
-        data?.games
-    );
+    } = useGamesById(data? data.games: []);
+
     const {
         data: fetchedWishlist,
         isLoading: wishlistLoading,
         error: wishlistError,
-    } = getGamesById(data?.wishlist); //
-
-    useEffect(() => {
-        if (fetchedGames) {
-            setGamesData(fetchedGames);
-        }
-    }, [fetchedGames]);
-
-    useEffect(() => {
-        if (fetchedWishlist) {
-            setWishlistData(fetchedWishlist);
-        }
-    }, [fetchedWishlist]);
-
-    console.log(data);
-    //
+    } = useGamesById(data? data.wishlist: []);
 
     if (error || gamesError || wishlistError)
         return <Text>Error loading profile</Text>; //
@@ -118,7 +98,7 @@ const ProfilePage = () => {
                             </Heading>
                             <ProfileGameList
                                 gameIds={data.games}
-                                games={gamesData}
+                                games={fetchedGames}
                                 isLoading={gamesLoading}
                             />
                         </VStack>
@@ -134,10 +114,10 @@ const ProfilePage = () => {
                             </Heading>
                             <ProfileGameList
                                 gameIds={data.wishlist}
-                                games={wishlistData}
+                                games={fetchedWishlist}
                                 isLoading={wishlistLoading}
                             />
-                        </VStack>
+                        </VStack>//
                         <Spacer />
                     </Flex>
                     <Button onClick={handleLogout} marginBottom="20px">

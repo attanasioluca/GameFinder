@@ -1,26 +1,25 @@
-import React, { useEffect } from "react";
-import usePost from "../hooks/usePost";
-import { useNavigate } from "react-router-dom";
+import React, { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
-const GoogleLoginPage = () => {
-    const navigate = useNavigate();
-    const { data, error, post } = usePost(
-        "http://localhost:3000/getGoogleToken"
-    );
-    const func = async () => {
-        try {
-            await post({});
-            console.log("post complete, token:", data)
-        } catch (err) {
-            console.error("Error adding game", err);
-        }
-    };
-    func();
-    if (data) {
-        localStorage.setItem("token", data as string);
-        navigate("/");
+const GoogleLoginCallback = () => {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const token = urlParams.get('token');
+    if (token) {
+      localStorage.setItem('token', token);
+      navigate('/'); 
+    } else {
+      navigate('/login');
     }
-    return <></>;
+  }, [navigate]);
+
+  return (
+    <div>
+      <h1>Eseguo l'accesso...</h1>
+    </div>
+  );
 };
 
-export default GoogleLoginPage;
+export default GoogleLoginCallback;
