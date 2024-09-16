@@ -23,20 +23,19 @@ export interface GameQuery {
 }
 
 const MainPage = () => {
-
     const navigate = useNavigate();
     useEffect(() => {
         const urlParams = new URLSearchParams(window.location.search);
-        const userToken = urlParams.get('token');
+        const userToken = urlParams.get("token");
 
         if (userToken) {
-        localStorage.setItem('token', userToken);
-        navigate('/', { replace: true });
+            localStorage.setItem("token", userToken);
+            navigate("/", { replace: true });
         }
     }, [navigate]);
 
     const userToken = localStorage.getItem("token");
-    
+
     useEffect(() => {
         if (!userToken) {
             navigate("/login");
@@ -54,21 +53,21 @@ const MainPage = () => {
     };
     const [gameQuery, setGameQuery] = useState<GameQuery>(initialQuery);
     const [resultLen, setResultLen] = useState(0);
-    const [showFriends, setShowFriends] = useState(false);
+    const initialPage = localStorage.getItem("initialpage")
+    const [showFriends, setShowFriends] = useState(initialPage==="true"? true: false);
 
     const { post: postFriend } = usePost(
         "http://localhost:3000/changeFriendStatus"
     );
 
     const handleFriendAdd = async (friend: string) => {
-
         try {
             await postFriend({
                 userId: userData?.id,
                 friendId: friend,
                 add: true,
             });
-            console.log("Friend added successfully");
+            window.location.reload();
         } catch (err) {
             console.error("Error adding friend", err);
         }

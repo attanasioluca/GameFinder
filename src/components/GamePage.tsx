@@ -31,6 +31,7 @@ const GamePage = () => {
                 });
                 console.log("Comment added successfully");
                 setIsRating(false); 
+                window.location.reload();
             } catch (err) {
                 console.error("Error adding comment", err);
             }
@@ -48,7 +49,7 @@ const GamePage = () => {
         if (data) {
             return (
                 <Box display="block" flexDirection="column">
-                    <GamePageCard onRating={handleRating} game={data} />
+                    <GamePageCard onRatingDelete={()=> {window.location.reload()}}onRating={handleRating} game={data} />
                     {isRating && (
                         <Portal>
                             <RatingScreen

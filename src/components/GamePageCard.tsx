@@ -3,7 +3,6 @@ import {
     Box,
     Button,
     ButtonGroup,
-    Divider,
     HStack,
     Heading,
     Icon,
@@ -29,10 +28,11 @@ import useReviews from "../hooks/useReviews";
 
 interface Props {
     onRating: () => void;
+    onRatingDelete: () => void;
     game: Game;
 }//
 
-const GamePageCard = ({ onRating, game }: Props) => {
+const GamePageCard = ({ onRating, onRatingDelete, game }: Props) => {
     const token = localStorage.getItem("token");
     const { getUserTokenInfo } = useUserTokenInfo();
     const { data: userData, error: userInfoError } = getUserTokenInfo(token? token : "");
@@ -85,7 +85,7 @@ const GamePageCard = ({ onRating, game }: Props) => {
                     gameId: review.gameId, 
             
                 });
-                console.log("Review deleted successfully");
+                onRatingDelete();
             } catch (err) {
                 console.error("Error deleting review", err);
             }

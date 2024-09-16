@@ -4,9 +4,10 @@ import FriendCard from './FriendCard'
 
 interface Props {
     data: string[];
+    onChange: () => void;
 }
 
-const FriendsList = ({ data }: Props) => {
+const FriendsList = ({ data, onChange}: Props) => {
 
     const [friendList, setFriendList] = useState<string[]>([]);
     useEffect(()=>{
@@ -46,7 +47,7 @@ const FriendsList = ({ data }: Props) => {
                         margin="0px 10px 20px 10px"
                     >
                         {friendList.map((friend) => (
-                            <FriendCard friend={friend} />
+                            <FriendCard onChange={onChange} friend={friend} />
                         ))}
                     </Flex>
                 </Flex>

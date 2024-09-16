@@ -85,7 +85,7 @@ const ProfilePage = () => {
                     </Heading>
                     <Flex w="100%" alignItems="flex-start" maxW="1900">
                         <Spacer />
-                        <FriendsList data={data.friends} />
+                        <FriendsList onChange={() => {window.location.reload()}} data={data.friends} />
                         <Spacer />
                         <VStack
                             w="30%"

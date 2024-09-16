@@ -6,9 +6,10 @@ import useUserTokenInfo from "../hooks/useUserTokenInfo";
 
 interface Props {
     friend: string;
+    onChange: () => void;
 }
 
-const FriendCard = ({ friend }: Props) => {
+const FriendCard = ({ friend, onChange }: Props) => {
     const { getUserInfo } = useUserInfo();
     const { data, error, isLoading } = getUserInfo(friend);
     const {
@@ -24,6 +25,7 @@ const FriendCard = ({ friend }: Props) => {
     const handleFriendRemoval = async () => {
         if (data?.id) {
             try {
+                onChange();
                 await post({ userId: userData?.id, friendId: data.id, add: false });
                 console.log("Friend removed successfully");
             } catch (err) {
