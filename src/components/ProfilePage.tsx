@@ -117,7 +117,7 @@ const ProfilePage = () => {
                                 games={fetchedWishlist}
                                 isLoading={wishlistLoading}
                             />
-                        </VStack>//
+                        </VStack>
                         <Spacer />
                     </Flex>
                     <Button onClick={handleLogout} marginBottom="20px">

@@ -27,7 +27,6 @@ const FriendCard = ({ friend, onChange }: Props) => {
             try {
                 onChange();
                 await post({ userId: userData?.id, friendId: data.id, add: false });
-                console.log("Friend removed successfully");
             } catch (err) {
                 console.error("Error removing friend", err);
             }

@@ -47,7 +47,7 @@ const FriendsList = ({ data, onChange}: Props) => {
                         margin="0px 10px 20px 10px"
                     >
                         {friendList.map((friend) => (
-                            <FriendCard onChange={onChange} friend={friend} />
+                            <FriendCard onChange={onChange}friend={friend} />
                         ))}
                     </Flex>
                 </Flex>

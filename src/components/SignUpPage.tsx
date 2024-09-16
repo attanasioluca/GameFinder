@@ -41,8 +41,7 @@ const App = () => {
     );
 
     if(signupError){
-        console.log(signupError);
-        
+        console.error("Error signing up", signupError);
     }
 
     if(signupData){
@@ -52,8 +51,6 @@ const App = () => {
 
     const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
-        console.log(name, value);
-        
         setFormData(prevState => ({
           ...prevState,
           [name]: value,

@@ -48,7 +48,7 @@ const App = () => {
     } = usePost("http://localhost:3000/login");
 
     if (loginError) {
-        console.log(loginError);
+        console.error("Error logging in", loginError);
     }
 
     const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {

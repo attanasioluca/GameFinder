@@ -66,7 +66,6 @@ const GamePageCard = ({ onRating, onRatingDelete, game }: Props) => {
         if (game.id) {
             try {
                 await postStatus({ userId: userData?.id, gameId: game.id, type, add });
-                console.log("Game added successfully");
             } catch (err) {
                 console.error("Error adding game", err);
             }

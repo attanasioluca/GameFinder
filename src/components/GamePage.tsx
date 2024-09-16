@@ -16,7 +16,6 @@ const GamePage = () => {
     } = usePost("http://localhost:3000/addReview");
     const { getUserTokenInfo } = useUserTokenInfo();
     const token = localStorage.getItem("token");
-    console.log(token);
     const { data: userData, error: userInfoError } = getUserTokenInfo(token? token: "");
     
     const handleSubmitRating = async (rating: number, comment: string) => {
@@ -29,7 +28,6 @@ const GamePage = () => {
                     comment: comment,
                     rating: rating,
                 });
-                console.log("Comment added successfully");
                 setIsRating(false); 
                 window.location.reload();
             } catch (err) {
