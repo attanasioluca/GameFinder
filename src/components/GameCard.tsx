@@ -13,7 +13,7 @@ const GameCard = ({ game }: Props) => {
     else {
         return (
             <Link to={`/games/${game.id}`}>
-                <Card>
+                <Card role="gameCard">
                     <Image src={getCroppedImageUrl(game.background_image)}/>
                     <CardBody>
                         <HStack marginBottom={2} justifyContent="space-between">

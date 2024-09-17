@@ -7,20 +7,17 @@ import NavBar from '../components/NavBar';
 
 describe('NavBar Component', () => {
 
-  test('renders NavBar with all elements', () => {
+  test('render NavBar with all elements', () => {
     render(
       <Router>
         <NavBar searchType={false} onToggle={() => {}} />
       </Router>
     );
     
-    const logoElement = screen.getByRole('img');
+    const logoElement = screen.getByAltText('logo');
     expect(logoElement).toBeInTheDocument();
 
-    const colorModeSwitch = screen.getByRole('switch');
-    expect(colorModeSwitch).toBeInTheDocument();
-
-    const avatar = screen.getByRole('img', { name: /avatar/i });
+    const avatar = screen.getByLabelText('avatar');
     expect(avatar).toBeInTheDocument();
   });
 
@@ -65,11 +62,15 @@ describe('NavBar Component', () => {
       </Router>
     );
     
-    const toggleSwitch = screen.getByRole('checkbox');
+    const userModeButton = screen.getByLabelText('UserMode');
+    const gameModeButton = screen.getByLabelText('GameMode');
 
-    fireEvent.click(toggleSwitch);
-    
+    fireEvent.click(userModeButton);
     expect(handleToggle).toHaveBeenCalledTimes(1);
+
+    fireEvent.click(gameModeButton);
+    expect(handleToggle).toHaveBeenCalledTimes(2);
+    
   });
 
   test('hides search input when showSearch is false', () => {

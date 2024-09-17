@@ -25,7 +25,7 @@ const NavBar = ({
     return (
         <HStack padding="10px">
             <Link to={`/`}>
-                <Image src={logo} boxSize="40px" onClick={onPress} />
+                <Image alt="logo" src={logo} boxSize="40px" onClick={onPress} />
             </Link>
             {showSearch && 
                 <Flex w="100%">
@@ -34,7 +34,7 @@ const NavBar = ({
                 </Flex>
             }
             <Spacer />
-            <ColorModeSwitch />
+            <ColorModeSwitch/>
             <Link to={`/account`}>
                 <Avatar boxSize="40px" />
             </Link>
