@@ -66,37 +66,31 @@ GameFinder/
 
 ---
 
-## **API Overview**
+## API Overview
 
-### **Auth**
-| Method | Endpoint | Description |
-|--------|-----------|-------------|
-| GET | `/auth/google` | Google OAuth login |
-| POST | `/signup` | Create account |
-| POST | `/login` | Email/password login |
-| GET | `/userByToken/:token` | Fetch logged-in user |
-
-### **Users**
-| Method | Endpoint | Description |
-|--------|-----------|-------------|
-| GET | `/allUsers/:userId` | Get all users except self/friends |
-| POST | `/changeFriendStatus` | Add/remove friends |
-
-### **Games**
-| Method | Endpoint | Description |
-|--------|-----------|-------------|
-| GET | `/gameStatus?userId&gameId` | Collection/wishlist status |
-| POST | `/changeGameStatus` | Add/remove from collection/wishlist |
-
-### **Reviews**
-| Method | Endpoint | Description |
-|--------|-----------|-------------|
-| GET | `/reviews/:gameId` | Get reviews for a game |
-| POST | `/addReview` | Add review |
-| POST | `/deleteReview` | Delete review |
-
----
-
+### Auth
+```
+GET  /auth/google               → Google OAuth login
+POST /signup                    → Create account
+POST /login                     → Email/password login
+GET  /userByToken/:token        → Fetch logged-in user
+```
+### Users
+```
+GET  /allUsers/:userId          → Get all users except self/friends
+POST /changeFriendStatus        → Add/remove friends
+```
+### Games
+```
+GET  /gameStatus?userId&gameId  → Collection/wishlist status
+POST /changeGameStatus          → Add/remove from collection/wishlist
+```
+### Reviews
+```
+GET  /reviews/:gameId           → Get reviews for a game
+POST /addReview                 → Add review
+POST /deleteReview              → Delete review
+```
 ## **Environment Variables**
 Create a `secret.js` inside `/server`:
 
