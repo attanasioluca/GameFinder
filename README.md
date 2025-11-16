@@ -2,6 +2,18 @@
 A full-stack MERN app that lets users search games, manage collections/wishlists, write reviews, and authenticate via Google or email/password.  
 Fast React frontend, clean Express backend, and MongoDB for persistence.
 
+--- 
+## Screenshots
+
+### Home Page
+![Home Page](./screenshots/mainpage.png)
+
+### Game Page
+![Game Details](./screenshots/gamepage.png)
+
+### Profile Page
+![Login Page](./screenshots/profilepage.png)
+
 ---
 
 ## **Features**
@@ -33,22 +45,24 @@ Fast React frontend, clean Express backend, and MongoDB for persistence.
 
 ---
 
-## **Project Structure**
+## Project Structure
+
+```text
 GameFinder/
 │
-├── client/ # Frontend (React + Vite)
-│ ├── src/
-│ └── ...
+├── client/              # Frontend (React + Vite)
+│   ├── src/
+│   └── ...
 │
-├── server/ # Backend (Express, MongoDB)
-│ ├── models/
-│ ├── auth/
-│ ├── server.cjs
-│ ├── secret.js
-│ └── ...
+├── server/              # Backend (Express, MongoDB)
+│   ├── models/
+│   ├── auth/
+│   ├── server.cjs
+│   ├── secret.js
+│   └── ...
 │
 └── README.md
-
+```
 
 ---
 
