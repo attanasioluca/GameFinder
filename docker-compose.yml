@@ -1,0 +1,36 @@
+services:
+  mongodb:
+    image: mongo:7
+    container_name: gamefinder-mongodb
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+
+  server:
+    build:
+      context: ./server
+    container_name: gamefinder-server
+    restart: unless-stopped
+    environment:
+      MONGO_DB_URL: mongodb://mongodb:27017/gamefinder
+      JWT_SECRET: change-this-in-production
+      FRONTEND_URL: http://localhost:5173
+    depends_on:
+      - mongodb
+    ports:
+      - "3000:3000"
+
+  client:
+    build:
+      context: ./client
+    container_name: gamefinder-client
+    restart: unless-stopped
+    depends_on:
+      - server
+    ports:
+      - "5173:80"
+
+volumes:
+  mongo_data:
