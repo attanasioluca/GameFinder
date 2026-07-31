@@ -7,7 +7,7 @@ const app = express();
 const port = 3000;
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const { jwt_secret, MONGO_DB_URL } = require("./secret");
+const { jwt_secret, MONGO_DB_URL } = require("./secrets");
 require("./auth");
 const { Login, Review, User } = require("./models");
 

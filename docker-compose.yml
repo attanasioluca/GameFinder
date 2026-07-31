@@ -15,7 +15,7 @@ services:
     restart: unless-stopped
     environment:
       MONGO_DB_URL: mongodb://mongodb:27017/gamefinder
-      JWT_SECRET: change-this-in-production
+      JWT_SECRET: secret #changed 
       FRONTEND_URL: http://localhost:5173
     depends_on:
       - mongodb

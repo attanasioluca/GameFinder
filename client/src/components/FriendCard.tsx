@@ -33,27 +33,27 @@ const FriendCard = ({ friend, onChange }: Props) => {
         }
     };
 
-    if (data) {
-        return (
-            <HStack
-                alignContent={"bottom"}
-                justifyItems="end"
-                margin={"0px 0px 15px 0px"}
-                padding={"10px"}
-                borderRadius={"14px"}
-                borderWidth={"2px"}
-            >
-                <Text fontSize={"20px"}>{data?.username} </Text>
-                <Spacer />
-                <IconButton
-                    onClick={handleFriendRemoval}
-                    icon={<DeleteIcon />}
-                    backgroundColor="red"
-                    aria-label="RemoveFriendButton"
-                />
-            </HStack>
-        );
-    }
+    if (!data) return null;
+
+    return (
+        <HStack
+            alignContent={"bottom"}
+            justifyItems="end"
+            margin={"0px 0px 15px 0px"}
+            padding={"10px"}
+            borderRadius={"14px"}
+            borderWidth={"2px"}
+        >
+            <Text fontSize={"20px"}>{data?.username} </Text>
+            <Spacer />
+            <IconButton
+                onClick={handleFriendRemoval}
+                icon={<DeleteIcon />}
+                backgroundColor="red"
+                aria-label="RemoveFriendButton"
+            />
+        </HStack>
+    );
 };
 
 export default FriendCard;
