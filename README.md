@@ -61,54 +61,95 @@ GameFinder/
 │   ├── secret.js
 │   └── ...
 │
+├── docker-compose.yml
 └── README.md
 ```
+
+---
+
+## Docker Quick Start
+
+Start the entire stack (MongoDB + backend + frontend):
+
+```bash
+docker compose up --build
+```
+
+Then open:
+
+- Frontend: http://localhost:5173
+- Backend API: http://localhost:3000
+- MongoDB: mongodb://localhost:27017
+
+To stop everything:
+
+```bash
+docker compose down
+```
+
+To remove the database volume as well:
+
+```bash
+docker compose down -v
+```
+
+The backend receives these environment variables automatically from Docker Compose:
+
+- `MONGO_DB_URL=mongodb://mongodb:27017/gamefinder`
+- `JWT_SECRET=change-this-in-production`
+- `FRONTEND_URL=http://localhost:5173`
 
 ---
 
 ## API Overview
 
 ### Auth
-```
+
+```text
 GET  /auth/google               → Google OAuth login
 POST /signup                    → Create account
 POST /login                     → Email/password login
 GET  /userByToken/:token        → Fetch logged-in user
 ```
+
 ### Users
-```
+
+```text
 GET  /allUsers/:userId          → Get all users except self/friends
 POST /changeFriendStatus        → Add/remove friends
 ```
+
 ### Games
-```
+
+```text
 GET  /gameStatus?userId&gameId  → Collection/wishlist status
 POST /changeGameStatus          → Add/remove from collection/wishlist
 ```
+
 ### Reviews
-```
+
+```text
 GET  /reviews/:gameId           → Get reviews for a game
 POST /addReview                 → Add review
 POST /deleteReview              → Delete review
 ```
-## **Environment Variables**
-Create a `secret.js` inside `/server`:
 
-```js
-module.exports = {
-    MONGO_DB_URL: "your-connection-string-here",
-    jwt_secret: "your-secret-here"
-};
-```
-## Then run both the sides separately
+---
+
+## Manual Development Setup
+
+If you prefer running frontend and backend separately:
 
 ### Backend
+
 ```bash
 cd server
 npm install
-node server.cjs
+npm start
 ```
+
 ### Frontend
+
 ```bash
 cd client
 npm install
