@@ -1,12 +1,14 @@
 import { Game, Review } from "../hooks/useGames";
 import {
+    Badge,
     Box,
     Button,
-    ButtonGroup,
+    Container,
+    Flex,
+    Grid,
     HStack,
     Heading,
     Icon,
-    IconButton,
     Image,
     Text,
     VStack,
@@ -16,27 +18,29 @@ import PlatformIconList from "./PlatformIconList";
 import NavBar from "./NavBar";
 import getCroppedImageUrl from "../services/image-url";
 import { useEffect, useState } from "react";
-import { AddIcon, CheckIcon, StarIcon } from "@chakra-ui/icons";
+import { AddIcon, ArrowBackIcon, CheckIcon, StarIcon } from "@chakra-ui/icons";
 import Score from "./Score";
 import CommentBox from "./CommentBox";
 import usePost from "../hooks/usePost";
 import useGameStatus from "../hooks/useGameStatus";
 import DOMPurify from "dompurify";
-import { FaHeart } from "react-icons/fa";
+import { FaComments, FaHeart, FaInfoCircle } from "react-icons/fa";
 import useUserTokenInfo from "../hooks/useUserTokenInfo";
 import useReviews from "../hooks/useReviews";
+import { useNavigate } from "react-router-dom";
 
 interface Props {
     onRating: () => void;
     onRatingDelete: () => void;
     game: Game;
-}//
+}
 
 const GamePageCard = ({ onRating, onRatingDelete, game }: Props) => {
+    const navigate = useNavigate();
     const token = localStorage.getItem("token");
     const { getUserTokenInfo } = useUserTokenInfo();
-    const { data: userData, error: userInfoError } = getUserTokenInfo(token? token : "");
-    
+    const { data: userData } = getUserTokenInfo(token || "");
+
     const { loading, error, post: postStatus } = usePost(
         "http://localhost:3000/changeGameStatus"
     );
@@ -74,22 +78,21 @@ const GamePageCard = ({ onRating, onRatingDelete, game }: Props) => {
 
     const handleReviewToggle = (review: Review) => {
         handleReviewDeletion(review);
-    }
+    };
 
     const handleReviewDeletion = async (review: Review) => {
-        if(review){
-            try{
-                await postDeleteReview({ 
-                    author: review.author, 
-                    gameId: review.gameId, 
-            
+        if (review) {
+            try {
+                await postDeleteReview({
+                    author: review.author,
+                    gameId: review.gameId,
                 });
                 onRatingDelete();
             } catch (err) {
                 console.error("Error deleting review", err);
             }
         }
-    }
+    };
 
     const handleWishlistToggle = () => {
         if (inWishlistStatus) {
@@ -118,154 +121,202 @@ const GamePageCard = ({ onRating, onRatingDelete, game }: Props) => {
     };
 
     if (statusError) {
-        return <Text>Error loading game status</Text>;
+        return <Text color="red.400" p={8}>Error loading game status</Text>;
     }
 
-    if(deleteReviewError) {
-        return <Text>Error deleting review</Text>;
+    if (deleteReviewError) {
+        return <Text color="red.400" p={8}>Error deleting review</Text>;
     }
 
     if (error) {
-        return <Text>Error adding game to the library</Text>;
+        return <Text color="red.400" p={8}>Error updating library status</Text>;
     }
 
     if (statusLoading || loading) {
-        return <Spinner />;
+        return (
+            <VStack py={20} spacing={4} bg="gray.900" minH="100vh">
+                <Spinner size="xl" color="purple.500" thickness="4px" />
+                <Text color="gray.400">Loading game details...</Text>
+            </VStack>
+        );
     }
 
     return (
-        <div>
-            <NavBar onToggle={() => { } } onSearch={() => { } } showSearch={false} onPress={() => { } } searchType={false} />
-            <VStack>
-                <HStack
-                    borderColor={"gray.650"}
-                    border="2px"
-                    w={"1200px"}
-                    padding={"40px 80px 40px 40px"}
-                    borderRadius={"34px"}
-                    marginTop={" 20px"}
-                >
-                    <Image
-                        src={getCroppedImageUrl(game.background_image)}
-                        maxHeight={500}
-                        maxWidth={800}
-                        borderRadius={15}
-                        margin={5}
-                    />
-                    <VStack align="start">
-                        <Heading marginBottom={"12px"}>{game.name}</Heading>
-                        <HStack w="full" gap={3}>
-                            <ButtonGroup
-                                backgroundColor={
-                                    inLibraryStatus
-                                        ? "rgba(108, 136, 118, 0.6)"
-                                        : ""
-                                }
-                                isAttached
-                                variant="outline"
-                            >
-                                <Button>
-                                    {inLibraryStatus
-                                        ? "In Library"
-                                        : "Add to Library"}
-                                </Button>
-                                <IconButton
-                                    onClick={handleLibraryToggle}
-                                    aria-label="Add to Library"
-                                    icon={
-                                        inLibraryStatus ? (
-                                            <CheckIcon />
-                                        ) : (
-                                            <AddIcon />
-                                        )
-                                    }
-                                />
-                            </ButtonGroup>
-                            <IconButton
-                                backgroundColor={
-                                    inWishlistStatus
-                                        ? "rgba(255,215,0, 0.3)" 
-                                        : ""
-                                }
-                                onClick={handleWishlistToggle}
-                                aria-label="Add to Wishlist"
-                                variant="outline"
-                                icon={
-                                    inWishlistStatus ? (
-                                        <CheckIcon />
-                                    ) : (
-                                        <Icon as={FaHeart} />
-                                    )
-                                }
-                            />
-                            {(userData?.user_type === "admin" || userData?.user_type === "premium") &&
-                            <Button variant="outline" onClick={onRating}>
-                                RATE
-                            </Button>
-                            }   
-                            <HStack>
-                                <Score
-                                    type={0}
-                                    size={1}
-                                    rating={game.metacritic}
-                                />
-                                <Score
-                                    type={1}
-                                    size={1}
-                                    rating={game.rating_top}
-                                />
-                            </HStack>
-                        </HStack>
-                        <Box marginLeft={"4px"}>
-                            <PlatformIconList
-                                platforms={game.parent_platforms.map(
-                                    (platform) => platform
-                                )}
-                            />
-                        </Box>
-                    </VStack>
-                </HStack>
+        <Box minH="100vh" bg="gray.900" color="white">
+            <NavBar
+                onToggle={() => {}}
+                onSearch={() => {}}
+                showSearch={false}
+                onPress={() => {}}
+                searchType={false}
+            />
 
-                <VStack
-                    borderColor={"gray.650"}
-                    w={"1200px"}
-                    border="2px"
-                    padding={"40px 80px 40px 40px"}
-                    borderRadius={"34px"}
-                    marginTop={" 20px"}
-                    alignItems={"trailing"}
+            <Container maxW="1400px" py={8} px={{ base: 4, md: 8 }}>
+                {/* BREADCRUMB / BACK BUTTON */}
+                <Button
+                    leftIcon={<ArrowBackIcon />}
+                    variant="ghost"
+                    color="gray.400"
+                    mb={6}
+                    _hover={{ color: "white", bg: "gray.800" }}
+                    onClick={() => navigate("/")}
                 >
-                    <Heading margin={"20px 0px 0px 32px"}> Description</Heading>
+                    Back to Games
+                </Button>
+
+                {/* MAIN GAME HERO CARD */}
+                <Box
+                    bg="gray.800"
+                    border="1px solid"
+                    borderColor="gray.700"
+                    borderRadius="2xl"
+                    p={{ base: 6, md: 8 }}
+                    mb={8}
+                    boxShadow="2xl"
+                >
+                    <Grid templateColumns={{ base: "1fr", lg: "450px 1fr" }} gap={8} alignItems="center">
+                        <Image
+                            src={getCroppedImageUrl(game.background_image)}
+                            alt={game.name}
+                            borderRadius="xl"
+                            w="full"
+                            maxH="450px"
+                            objectFit="cover"
+                            boxShadow="lg"
+                        />
+
+                        <VStack align="flex-start" spacing={5} w="full" justify="center">
+                            <VStack align="flex-start" spacing={2} w="full">
+                                <Heading size="2xl" fontWeight="bold">
+                                    {game.name}
+                                </Heading>
+                                <HStack spacing={4} pt={2} wrap="wrap">
+                                    <Score type={0} size={1} rating={game.metacritic} />
+                                    <Score type={1} size={1} rating={game.rating_top} />
+                                </HStack>
+                            </VStack>
+
+                            <Box>
+                                <Text color="gray.400" fontSize="sm" mb={2} fontWeight="semibold">
+                                    PLATFORMS
+                                </Text>
+                                <PlatformIconList
+                                    platforms={game.parent_platforms.map(
+                                        (platform) => platform
+                                    )}
+                                />
+                            </Box>
+
+                            {/* ACTION BUTTONS */}
+                            <HStack spacing={4} pt={4} wrap="wrap" w="full">
+                                <Button
+                                    onClick={handleLibraryToggle}
+                                    colorScheme={inLibraryStatus ? "green" : "purple"}
+                                    variant={inLibraryStatus ? "solid" : "solid"}
+                                    leftIcon={inLibraryStatus ? <CheckIcon /> : <AddIcon />}
+                                    borderRadius="xl"
+                                    px={6}
+                                    size="lg"
+                                >
+                                    {inLibraryStatus ? "In Library" : "Add to Library"}
+                                </Button>
+
+                                <Button
+                                    onClick={handleWishlistToggle}
+                                    colorScheme={inWishlistStatus ? "yellow" : "gray"}
+                                    variant={inWishlistStatus ? "solid" : "outline"}
+                                    leftIcon={inWishlistStatus ? <CheckIcon /> : <Icon as={FaHeart} color={inWishlistStatus ? "black" : "red.400"} />}
+                                    borderRadius="xl"
+                                    px={6}
+                                    size="lg"
+                                >
+                                    {inWishlistStatus ? "In Wishlist" : "Wishlist"}
+                                </Button>
+
+                                {(userData?.user_type === "admin" || userData?.user_type === "premium") && (
+                                    <Button
+                                        variant="outline"
+                                        colorScheme="purple"
+                                        leftIcon={<StarIcon />}
+                                        onClick={onRating}
+                                        borderRadius="xl"
+                                        px={6}
+                                        size="lg"
+                                    >
+                                        Rate Game
+                                    </Button>
+                                )}
+                            </HStack>
+                        </VStack>
+                    </Grid>
+                </Box>
+
+                {/* DESCRIPTION CARD */}
+                <Box
+                    bg="gray.800"
+                    border="1px solid"
+                    borderColor="gray.700"
+                    borderRadius="2xl"
+                    p={{ base: 6, md: 8 }}
+                    mb={8}
+                    boxShadow="xl"
+                >
+                    <HStack spacing={3} mb={6}>
+                        <Icon as={FaInfoCircle} color="purple.400" boxSize={6} />
+                        <Heading size="lg">Overview</Heading>
+                    </HStack>
                     <Text
                         dangerouslySetInnerHTML={{
                             __html: DOMPurify.sanitize(game.description),
                         }}
-                        margin={"0px 32px 20px 32px"}
+                        color="gray.300"
+                        fontSize="md"
+                        lineHeight="tall"
                     />
-                </VStack>
+                </Box>
 
-                <VStack
-                    borderColor={"gray.650"}
-                    w={"1200px"}
-                    border="2px"
-                    padding={"40px 80px 40px 40px"}
-                    borderRadius={"34px"}
-                    marginTop={" 20px"}
-                    alignItems={"trailing"}
+                {/* REVIEWS CARD */}
+                <Box
+                    bg="gray.800"
+                    border="1px solid"
+                    borderColor="gray.700"
+                    borderRadius="2xl"
+                    p={{ base: 6, md: 8 }}
+                    boxShadow="xl"
                 >
-                    <Heading margin={"20px 0px 0px 32px"}>Reviews</Heading>
-                    {reviewData && reviewData.length > 0 ? (
+                    <HStack justify="space-between" mb={6}>
+                        <HStack spacing={3}>
+                            <Icon as={FaComments} color="purple.400" boxSize={6} />
+                            <Heading size="lg">Community Reviews</Heading>
+                        </HStack>
+                        {reviewData && (
+                            <Badge colorScheme="purple" borderRadius="full" px={3} py={1}>
+                                {reviewData.length} Reviews
+                            </Badge>
+                        )}
+                    </HStack>
+
+                    {reviewLoading ? (
+                        <Spinner color="purple.500" />
+                    ) : reviewData && reviewData.length > 0 ? (
                         reviewData.map((review) => (
-                            <CommentBox userRole={userData?.user_type} key={review.author} review={review} onDelete={() =>{handleReviewToggle(review)}} />
+                            <CommentBox
+                                key={review.author}
+                                userRole={userData?.user_type}
+                                review={review}
+                                onDelete={() => {
+                                    handleReviewToggle(review);
+                                }}
+                            />
                         ))
                     ) : (
-                        <Text margin={"0px 20px 20px 32px"}>
-                            No reviews yet. 
+                        <Text color="gray.400">
+                            No reviews posted yet. Be the first to rate and review this game!
                         </Text>
                     )}
-                </VStack>
-            </VStack>
-        </div>
+                </Box>
+            </Container>
+        </Box>
     );
 };
 
