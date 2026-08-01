@@ -7,7 +7,7 @@ const app = express();
 const port = 3000;
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const { jwt_secret, MONGO_DB_URL } = require("./secrets");
+const { jwt_secret, MONGO_DB_URL } = require("./secret");
 require("./auth");
 const { Login, Review, User } = require("./models");
 
@@ -23,6 +23,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 app.use(cors());
 app.use(express.json());
+app.get("/favicon.ico", (req, res) => res.status(204).end());
 
 mongoose.connect(MONGO_DB_URL);
 
@@ -169,7 +170,7 @@ app.get("/userByUsername/:username", async (req, res) => {
         if (!user) {
             return res.status(400).json({ message: "Login not found" });
         }
-        res.json(result);
+        res.json(user);
     } catch (error) {
         console.error("Error fetching user from token:", error);
         res.status(500).send(error.message);
@@ -221,11 +222,11 @@ app.post("/changeGameStatus", async (req, res) => {
         } else {
             if (type === 1) {
                 if (user.games.includes(gameId)) {
-                    user.games.remove(gameId); 
+                    user.games.pull(gameId); 
                 }
             } else if (type === 2) {
                 if (user.wishlist.includes(gameId)) {
-                    user.wishlist.remove(gameId); 
+                    user.wishlist.pull(gameId); 
                 }
             }
         }
@@ -258,8 +259,8 @@ app.post("/changeFriendStatus", async (req, res) => {
             }
         } else {
             if (user.friends.includes(friendId)) {
-                user.friends.remove(friendId);
-                friend.friends.remove(userId);
+                user.friends.pull(friendId);
+                friend.friends.pull(userId);
             }
         }
         await user.save();

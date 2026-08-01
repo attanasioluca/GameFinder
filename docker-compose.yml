@@ -13,10 +13,14 @@ services:
       context: ./server
     container_name: gamefinder-server
     restart: unless-stopped
+    command: npm run dev
     environment:
       MONGO_DB_URL: mongodb://mongodb:27017/gamefinder
-      JWT_SECRET: secret #changed 
+      JWT_SECRET: secret
       FRONTEND_URL: http://localhost:5173
+    volumes:
+      - ./server:/app
+      - /app/node_modules
     depends_on:
       - mongodb
     ports:
@@ -25,12 +29,16 @@ services:
   client:
     build:
       context: ./client
+      dockerfile: Dockerfile.dev
     container_name: gamefinder-client
     restart: unless-stopped
+    volumes:
+      - ./client:/app
+      - /app/node_modules
     depends_on:
       - server
     ports:
-      - "5173:80"
+      - "5173:5173"
 
 volumes:
   mongo_data:

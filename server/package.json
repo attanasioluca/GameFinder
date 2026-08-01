@@ -12,7 +12,7 @@
   },
   "scripts": {
     "start": "node server.cjs",
-    "dev": "nodemon server.cjs"
+    "dev": "node --watch server.cjs"
   },
   "name": "gamefinder-server",
   "version": "1.0.0",

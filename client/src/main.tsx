@@ -4,7 +4,6 @@ import App from "./App";
 import theme from "./theme";
 import "./index.css";
 import { BrowserRouter } from "react-router-dom";
-import AuthProvider from "react-auth-kit";
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
         <ChakraProvider theme={theme}>
