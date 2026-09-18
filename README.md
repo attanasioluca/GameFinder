@@ -1,4 +1,4 @@
-# **GameFinder 🎮**
+# **GameFinder **
 A full-stack MERN app that lets users search games, manage collections/wishlists, write reviews, and authenticate via Google or email/password.  
 Fast React frontend, clean Express backend, and MongoDB for persistence.
 
